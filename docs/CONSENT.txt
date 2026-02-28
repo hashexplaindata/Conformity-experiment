@@ -1,0 +1,26 @@
+INFORMED CONSENT — UI Preference Study
+
+You are invited to participate in a brief research study on user interface design preferences.
+
+WHAT YOU WILL DO:
+You will view 8 pairs of user interface designs and select the one you prefer in each pair. You will also rate your confidence in each choice. The study takes approximately 3-5 minutes.
+
+VOLUNTARY PARTICIPATION:
+Your participation is entirely voluntary. You may stop at any time by closing your browser. No penalty will result from withdrawal.
+
+ANONYMITY:
+No personally identifiable information is collected. Responses are recorded with a randomly generated anonymous ID. Data will be reported only in aggregate.
+
+DATA USE:
+Your anonymous responses will be used for class research purposes and may be included in academic presentations or publications. Only group-level results will be reported.
+
+RISKS:
+This study involves minimal risk. You will only be viewing interface designs and clicking your preferences.
+
+CONTACT:
+If you have questions about this study, please contact: [Your Name, Email]
+
+By proceeding, you confirm that you are 18 years of age or older and consent to participate.
+
+---
+Version: 1.0 | Date: 2026-02-27

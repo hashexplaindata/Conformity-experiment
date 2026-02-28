@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UI Preference Study</title>
+  <meta name="description" content="A research study on user interface design preferences.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <!-- WELCOME SCREEN -->
+  <div id="screen-welcome" class="screen active">
+    <div class="card welcome-card">
+      <div class="logo-icon">🧪</div>
+      <h1>UI Preference Study</h1>
+      <p class="subtitle">Thank you for participating in this research study on interface design preferences.</p>
+      <div class="info-box">
+        <h3>What to expect</h3>
+        <ul>
+          <li>You will view <strong>8 pairs</strong> of user interface designs</li>
+          <li>For each pair, choose the design you prefer</li>
+          <li>Rate your confidence in each choice</li>
+          <li>The study takes approximately <strong>3–5 minutes</strong></li>
+        </ul>
+      </div>
+      <div class="consent-box">
+        <label class="checkbox-label" id="consent-label">
+          <input type="checkbox" id="consent-check">
+          <span>I understand this is voluntary, anonymous, and I may stop at any time.</span>
+        </label>
+      </div>
+      <button id="btn-start" class="btn-primary" disabled>Begin Study</button>
+    </div>
+  </div>
+
+  <!-- LOADER SCREEN -->
+  <div id="screen-loader" class="screen">
+    <div class="skeleton-container">
+      <div class="loader-spinner"></div>
+      <div class="loader-text" id="loader-text">Analyzing user patterns...</div>
+      <div class="skeleton-grid">
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRIAL SCREEN -->
+  <div id="screen-trial" class="screen">
+    <div class="trial-header">
+      <div class="progress-info">
+        <span id="trial-counter">Trial 1 of 8</span>
+        <div class="progress-bar">
+          <div id="progress-fill" class="progress-fill"></div>
+        </div>
+      </div>
+    </div>
+    <div class="trial-body">
+      <h2 class="trial-question">Which design do you prefer?</h2>
+      <p class="trial-hint">Click on the design you find more appealing or effective.</p>
+      <div id="pair-container" class="pair-container">
+        <!-- Dynamically populated by JS -->
+      </div>
+      <div id="confidence-section" class="confidence-section hidden">
+        <h3>How confident are you in your choice?</h3>
+        <div class="confidence-scale">
+          <span class="scale-label">Not at all</span>
+          <div class="confidence-buttons">
+            <button class="conf-btn" data-val="1">1</button>
+            <button class="conf-btn" data-val="2">2</button>
+            <button class="conf-btn" data-val="3">3</button>
+            <button class="conf-btn" data-val="4">4</button>
+            <button class="conf-btn" data-val="5">5</button>
+          </div>
+          <span class="scale-label">Very confident</span>
+        </div>
+        <button id="btn-next" class="btn-primary" disabled>Next Trial</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPLETION SCREEN -->
+  <div id="screen-complete" class="screen">
+    <div class="card welcome-card">
+      <div class="logo-icon">✅</div>
+      <h1>Thank You!</h1>
+      <p class="subtitle">Your responses have been recorded. You may now close this page.</p>
+
+      <div class="results-dashboard" id="results-dashboard">
+        <div class="metric-card">
+          <div class="metric-title" id="conformity-title">Conformity Score</div>
+          <div class="ring-chart">
+            <svg viewBox="0 0 100 100" width="100" height="100">
+              <circle class="ring-bg" cx="50" cy="50" r="40"></circle>
+              <circle class="ring-fill" id="conformity-ring" cx="50" cy="50" r="40" stroke-dasharray="0 251.2"></circle>
+            </svg>
+            <div class="ring-text"><span id="conformity-val">0</span>%</div>
+          </div>
+          <div class="metric-subtitle" id="conformity-subtitle">Matched AI recommendations</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-title">Decision Speed</div>
+          <div class="metric-value"><span id="speed-val">0</span>s</div>
+          <div class="metric-subtitle">Average time per trial</div>
+        </div>
+      </div>
+
+      <div class="info-box">
+        <h3>Study Details</h3>
+        <p>You completed all 8 trials. Your anonymous data will help us understand how interface design elements affect
+          user preferences.</p>
+        <p><strong>Condition:</strong> <span id="summary-condition"></span> | <strong>Participant ID:</strong> <span
+            id="summary-pid" style="font-family: monospace; font-size: 0.8em;"></span></p>
+      </div>
+      <button id="btn-download" class="btn-primary">Download Your Responses (CSV)</button>
+      <p class="debrief-link">Read the <a href="../docs/DEBRIEF.txt" target="_blank">debrief statement</a> to learn more
+        about this study.</p>
+    </div>
+  </div>
+
+  <script>
+    // ===========================
+    // EXPERIMENT CONFIGURATION
+    // ===========================
+    const CONFIG = {
+      NUM_TRIALS: 8,
+      CONDITIONS: ['control', 'ai'],
+    };
+
+    // Generate participant UUID
+    function uuid() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+        const r = Math.random() * 16 | 0;
+        return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+      });
+    }
+
+    // ===========================
+    // UI PAIR DEFINITIONS
+    // ===========================
+    // Each pair: { id, scenario, descA, descB, renderA(), renderB(), aiPreferred }
+    // aiPreferred = which option ('A' or 'B') gets the AI badge in the AI condition
+    const PAIRS = [
+      {
+        id: 'pair01', scenario: 'E-Commerce Product Card',
+        aiPreferred: 'A',
+        renderA: () => renderProductCard('Add to Cart', '#3b82f6', 'A'),
+        renderB: () => renderProductCard('Add to Cart', '#22c55e', 'B'),
+      },
+      {
+        id: 'pair02', scenario: 'Settings Page',
+        aiPreferred: 'B',
+        renderA: () => renderSettingsPage('left', 'A'),
+        renderB: () => renderSettingsPage('right', 'B'),
+      },
+      {
+        id: 'pair03', scenario: 'Analytics Dashboard',
+        aiPreferred: 'A',
+        renderA: () => renderDashboard('bar', 'A'),
+        renderB: () => renderDashboard('line', 'B'),
+      },
+      {
+        id: 'pair04', scenario: 'Signup Form',
+        aiPreferred: 'B',
+        renderA: () => renderSignupForm('Sign Up', 'A'),
+        renderB: () => renderSignupForm('Get Started', 'B'),
+      },
+      {
+        id: 'pair05', scenario: 'Pricing Table',
+        aiPreferred: 'A',
+        renderA: () => renderPricingTable('basic', 'A'),
+        renderB: () => renderPricingTable('pro', 'B'),
+      },
+      {
+        id: 'pair06', scenario: 'Navigation Menu',
+        aiPreferred: 'B',
+        renderA: () => renderNavSidebar('outlined', 'A'),
+        renderB: () => renderNavSidebar('filled', 'B'),
+      },
+      {
+        id: 'pair07', scenario: 'Notification Banner',
+        aiPreferred: 'A',
+        renderA: () => renderNotification('top', 'A'),
+        renderB: () => renderNotification('inline', 'B'),
+      },
+      {
+        id: 'pair08', scenario: 'Search Results',
+        aiPreferred: 'B',
+        renderA: () => renderSearchResults('list', 'A'),
+        renderB: () => renderSearchResults('grid', 'B'),
+      },
+    ];
+
+    // ===========================
+    // UI RENDERERS (CSS-rendered mockup components)
+    // ===========================
+
+    function renderProductCard(btnText, btnColor, label) {
+      return `
+      <div class="mockup-frame">
+        <div class="mockup-label">Option ${label}</div>
+        <div class="mock-product-card">
+          <div class="mock-product-img">
+            <svg viewBox="0 0 120 120" width="120" height="120"><circle cx="60" cy="40" r="30" fill="#e0e7ff"/><path d="M30 55 Q60 85 90 55" stroke="#6366f1" fill="none" stroke-width="3"/><rect x="35" y="20" width="50" height="8" rx="4" fill="#6366f1"/></svg>
+          </div>
+          <h4 class="mock-product-title">AuraSound Pro</h4>
+          <div class="mock-stars">★★★★☆ <span class="mock-rating">4.5</span></div>
+          <div class="mock-price">$129.99</div>
+          <button class="mock-btn" style="background:${btnColor}">${btnText}</button>
+        </div>
+      </div>`;
+    }
+
+    function renderSettingsPage(align, label) {
+      const items = ['Notifications', 'Dark Mode', 'Location Services', 'Auto-Update'];
+      const toggles = items.map(item => `
+      <div class="mock-setting-row" style="flex-direction:${align === 'left' ? 'row-reverse' : 'row'}">
+        <span class="mock-setting-label">${item}</span>
+        <div class="mock-toggle ${Math.random() > 0.5 ? 'on' : ''}"></div>
+      </div>`).join('');
+      return `
+      <div class="mockup-frame">
+        <div class="mockup-label">Option ${label}</div>
+        <div class="mock-settings">
+          <h4 class="mock-section-title">Settings</h4>
+          ${toggles}
+        </div>
+      </div>`;
+    }
+
+    function renderDashboard(chartType, label) {
+      const bars = [40, 65, 50, 80, 60, 75];
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+      let chartSvg;
+      if (chartType === 'bar') {
+        const barEls = bars.map((h, i) =>
+          `<rect x="${i * 40 + 10}" y="${100 - h}" width="24" height="${h}" rx="4" fill="#6366f1" opacity="0.85"/>`
+        ).join('');
+        const labels = months.map((m, i) =>
+          `<text x="${i * 40 + 22}" y="115" text-anchor="middle" font-size="10" fill="#94a3b8">${m}</text>`
+        ).join('');
+        chartSvg = `<svg viewBox="0 0 260 120" width="100%" height="130">${barEls}${labels}</svg>`;
+      } else {
+        const points = bars.map((h, i) => `${i * 48 + 20},${100 - h}`).join(' ');
+        const dots = bars.map((h, i) =>
+          `<circle cx="${i * 48 + 20}" cy="${100 - h}" r="4" fill="#6366f1"/>`
+        ).join('');
+        const labels = months.map((m, i) =>
+          `<text x="${i * 48 + 20}" y="115" text-anchor="middle" font-size="10" fill="#94a3b8">${m}</text>`
+        ).join('');
+        chartSvg = `<svg viewBox="0 0 260 120" width="100%" height="130">
+        <polyline points="${points}" fill="none" stroke="#6366f1" stroke-width="2.5"/>
+        ${dots}${labels}</svg>`;
+      }
+      return `
+      <div class="mockup-frame">
+        <div class="mockup-label">Option ${label}</div>
+        <div class="mock-dashboard">
+          <h4 class="mock-section-title">Revenue Overview</h4>
+          <div class="mock-metric"><span class="mock-metric-val">$42,850</span><span class="mock-metric-change">+12.5%</span></div>
+          ${chartSvg}
+        </div>
+      </div>`;
+    }
+
+    function renderSignupForm(ctaText, label) {
+      return `
+      <div class="mockup-frame">
+        <div class="mockup-label">Option ${label}</div>
+        <div class="mock-signup">
+          <h4 class="mock-section-title">Create Account</h4>
+          <div class="mock-input"><span>Name</span></div>
+          <div class="mock-input"><span>Email</span></div>
+          <div class="mock-input"><span>Password</span></div>
+          <button class="mock-btn mock-btn-full">${ctaText}</button>
+        </div>
+      </div>`;
+    }
+
+    function renderPricingTable(highlighted, label) {
+      const tiers = [
+        { name: 'Basic', price: '$9', features: ['5 Projects', '10 GB Storage', 'Email Support'] },
+        { name: 'Pro', price: '$29', features: ['Unlimited Projects', '100 GB Storage', 'Priority Support', 'Analytics'] },
+        { name: 'Enterprise', price: '$99', features: ['Everything in Pro', '1 TB Storage', 'Dedicated Manager', 'Custom API', 'SLA'] },
+      ];
+      const cards = tiers.map(t => {
+        const isHl = t.name.toLowerCase() === highlighted;
+        return `<div class="mock-pricing-card ${isHl ? 'highlighted' : ''}">
+        ${isHl ? '<div class="mock-badge">Most Popular</div>' : ''}
+        <h5>${t.name}</h5>
+        <div class="mock-tier-price">${t.price}<span>/mo</span></div>
+        <ul>${t.features.map(f => `<li>✓ ${f}</li>`).join('')}</ul>
+        <button class="mock-btn mock-btn-sm ${isHl ? '' : 'mock-btn-outline'}">Get Started</button>
+      </div>`;
+      }).join('');
+      return `
+      <div class="mockup-frame">
+        <div class="mockup-label">Option ${label}</div>
+        <div class="mock-pricing">${cards}</div>
+      </div>`;
+    }
+
+    function renderNavSidebar(style, label) {
+      const icons = {
+        outlined: ['○', '◇', '□', '✉', '⚙'],
+        filled: ['●', '◆', '■', '✉', '⚙'],
+      };
+      const items = ['Home', 'Dashboard', 'Projects', 'Messages', 'Settings'];
+      const navItems = items.map((item, i) => `
+      <div class="mock-nav-item ${i === 0 ? 'active' : ''}">
+        <span class="mock-nav-icon">${icons[style][i]}</span>
+        <span>${item}</span>
+      </div>`).join('');
+      return `
+      <div class="mockup-frame">
+        <div class="mockup-label">Option ${label}</div>
+        <div class="mock-sidebar">
+          <div class="mock-sidebar-logo">AppName</div>
+          ${navItems}
+        </div>
+      </div>`;
+    }
+
+    function renderNotification(position, label) {
+      const banner = `<div class="mock-banner">
+      <span>🚀 New feature available! Try our AI assistant.</span>
+      <a href="#">Learn More</a>
+      <button class="mock-banner-close">✕</button>
+    </div>`;
+      if (position === 'top') {
+        return `
+        <div class="mockup-frame">
+          <div class="mockup-label">Option ${label}</div>
+          <div class="mock-page">
+            ${banner}
+            <div class="mock-page-header">Welcome Back</div>
+            <div class="mock-page-content"><div class="mock-text-block"></div><div class="mock-text-block short"></div></div>
+          </div>
+        </div>`;
+      } else {
+        return `
+        <div class="mockup-frame">
+          <div class="mockup-label">Option ${label}</div>
+          <div class="mock-page">
+            <div class="mock-page-header">Welcome Back</div>
+            <div class="mock-page-content"><div class="mock-text-block"></div></div>
+            ${banner}
+            <div class="mock-page-content"><div class="mock-text-block short"></div></div>
+          </div>
+        </div>`;
+      }
+    }
+
+    function renderSearchResults(layout, label) {
+      const items = [
+        { title: 'SoundWave Elite', price: '$89.99', desc: 'Premium wireless over-ear headphones with ANC' },
+        { title: 'BassCore X1', price: '$59.99', desc: 'Deep bass, long battery life, foldable design' },
+        { title: 'ClearTone Buds', price: '$49.99', desc: 'True wireless earbuds with crystal-clear audio' },
+        { title: 'StudioMax 400', price: '$149.99', desc: 'Studio-grade monitoring headphones, wired/wireless' },
+      ];
+      if (layout === 'list') {
+        const rows = items.map(it => `
+        <div class="mock-search-row">
+          <div class="mock-search-thumb"></div>
+          <div class="mock-search-info">
+            <h5>${it.title}</h5>
+            <p>${it.desc}</p>
+            <span class="mock-price">${it.price}</span>
+          </div>
+        </div>`).join('');
+        return `
+        <div class="mockup-frame">
+          <div class="mockup-label">Option ${label}</div>
+          <div class="mock-search">
+            <div class="mock-search-bar">🔍 wireless headphones</div>
+            <div class="mock-search-list">${rows}</div>
+          </div>
+        </div>`;
+      } else {
+        const cards = items.map(it => `
+        <div class="mock-search-card">
+          <div class="mock-search-thumb-grid"></div>
+          <h5>${it.title}</h5>
+          <p>${it.desc}</p>
+          <span class="mock-price">${it.price}</span>
+        </div>`).join('');
+        return `
+        <div class="mockup-frame">
+          <div class="mockup-label">Option ${label}</div>
+          <div class="mock-search">
+            <div class="mock-search-bar">🔍 wireless headphones</div>
+            <div class="mock-search-grid">${cards}</div>
+          </div>
+        </div>`;
+      }
+    }
+
+    // ===========================
+    // AI BADGE OVERLAY
+    // ===========================
+    function addAiBadge(html) {
+      return html.replace('<div class="mockup-label">', '<div class="ai-badge">AI Recommended</div><div class="mockup-label">');
+    }
+
+    // ===========================
+    // EXPERIMENT STATE
+    // ===========================
+    const state = {
+      participantId: uuid(),
+      condition: new URLSearchParams(window.location.search).get('cond') || 'control',
+      currentTrial: 0,
+      trialOrder: [],
+      responses: [],
+      trialStartTime: null,
+      selectedChoice: null,
+      selectedConfidence: null,
+    };
+
+    // Shuffle array (Fisher-Yates)
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    // ===========================
+    // DOM
+    // ===========================
+    const $ = s => document.querySelector(s);
+    const $$ = s => document.querySelectorAll(s);
+
+    function showScreen(id) {
+      $$('.screen').forEach(s => s.classList.remove('active'));
+      $(`#${id}`).classList.add('active');
+    }
+
+    function simulateLoading(callback) {
+      showScreen('screen-loader');
+      const texts = ['Analyzing user patterns...', 'Generating variations...', 'Optimizing layouts...'];
+      $('#loader-text').textContent = texts[Math.floor(Math.random() * texts.length)];
+      setTimeout(callback, 800 + Math.random() * 700);
+    }
+
+    // ===========================
+    // TRIAL LOGIC
+    // ===========================
+    function startExperiment() {
+      state.trialOrder = shuffle([...Array(CONFIG.NUM_TRIALS).keys()]);
+      state.currentTrial = 0;
+      simulateLoading(() => {
+        showScreen('screen-trial');
+        renderTrial();
+      });
+    }
+
+    function renderTrial() {
+      const idx = state.trialOrder[state.currentTrial];
+      const pair = PAIRS[idx];
+      const trialNum = state.currentTrial + 1;
+
+      $('#trial-counter').textContent = `Trial ${trialNum} of ${CONFIG.NUM_TRIALS}`;
+      $('#progress-fill').style.width = `${(trialNum / CONFIG.NUM_TRIALS) * 100}%`;
+
+      // Randomize left/right placement
+      const swapSides = Math.random() > 0.5;
+      let htmlA = pair.renderA();
+      let htmlB = pair.renderB();
+
+      // In AI condition, add badge to the AI-preferred option
+      if (state.condition === 'ai') {
+        if (pair.aiPreferred === 'A') htmlA = addAiBadge(htmlA);
+        else htmlB = addAiBadge(htmlB);
+      }
+
+      const leftHtml = swapSides ? htmlB : htmlA;
+      const rightHtml = swapSides ? htmlA : htmlB;
+      const leftChoice = swapSides ? 'B' : 'A';
+      const rightChoice = swapSides ? 'A' : 'B';
+
+      $('#pair-container').innerHTML = `
+      <div class="option-wrapper" data-choice="${leftChoice}" id="option-left">
+        ${leftHtml}
+      </div>
+      <div class="option-wrapper" data-choice="${rightChoice}" id="option-right">
+        ${rightHtml}
+      </div>
+    `;
+
+      // Reset state
+      state.selectedChoice = null;
+      state.selectedConfidence = null;
+      $('#confidence-section').classList.add('hidden');
+      $('#btn-next').disabled = true;
+      $$('.conf-btn').forEach(b => b.classList.remove('selected'));
+
+      // Bind click handlers
+      $$('.option-wrapper').forEach(el => {
+        el.addEventListener('click', () => selectOption(el));
+      });
+
+      state.trialStartTime = performance.now();
+    }
+
+    function selectOption(el) {
+      $$('.option-wrapper').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+      state.selectedChoice = el.dataset.choice;
+      $('#confidence-section').classList.remove('hidden');
+      $('#confidence-section').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function selectConfidence(val) {
+      state.selectedConfidence = val;
+      $$('.conf-btn').forEach(b => b.classList.remove('selected'));
+      $(`.conf-btn[data-val="${val}"]`).classList.add('selected');
+      $('#btn-next').disabled = false;
+    }
+
+    function nextTrial() {
+      const rt = Math.round(performance.now() - state.trialStartTime);
+      const idx = state.trialOrder[state.currentTrial];
+      const pair = PAIRS[idx];
+
+      state.responses.push({
+        participant_id: state.participantId,
+        condition: state.condition,
+        trial_num: state.currentTrial + 1,
+        pair_id: pair.id,
+        choice: state.selectedChoice,
+        chosen_image: `${pair.id}_${state.selectedChoice}.png`,
+        confidence_1_5: state.selectedConfidence,
+        rt_ms: rt,
+        timestamp: new Date().toISOString(),
+      });
+
+      state.currentTrial++;
+      if (state.currentTrial < CONFIG.NUM_TRIALS) {
+        simulateLoading(() => {
+          showScreen('screen-trial');
+          renderTrial();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      } else {
+        showComplete();
+      }
+    }
+
+    // ===========================
+    // COMPLETION
+    // ===========================
+    function showComplete() {
+      $('#summary-condition').textContent = state.condition === 'ai' ? 'AI Label (Treatment)' : 'Control (No Label)';
+      $('#summary-pid').textContent = state.participantId;
+
+      // Calculate stats
+      let matchCount = 0;
+      let totalRt = 0;
+
+      state.responses.forEach(r => {
+        totalRt += r.rt_ms;
+        const pairInfo = PAIRS.find(p => p.id === r.pair_id);
+        if (r.choice === pairInfo.aiPreferred) matchCount++;
+      });
+
+      const avgRtSeconds = (totalRt / CONFIG.NUM_TRIALS / 1000).toFixed(1);
+      const matchPercentage = Math.round((matchCount / CONFIG.NUM_TRIALS) * 100);
+
+      $('#speed-val').textContent = avgRtSeconds;
+
+      if (state.condition === 'ai') {
+        $('#conformity-title').textContent = 'Conformity Score';
+        $('#conformity-subtitle').textContent = 'Matched AI recommendations';
+      } else {
+        $('#conformity-title').textContent = 'Pattern Bias';
+        $('#conformity-subtitle').textContent = 'Selected target designs';
+      }
+
+      // Animate ring
+      const ring = $('#conformity-ring');
+      const circumference = 2 * Math.PI * 40; // r=40
+      ring.style.strokeDasharray = `${circumference} ${circumference}`;
+      ring.style.strokeDashoffset = circumference;
+
+      showScreen('screen-complete');
+
+      setTimeout(() => {
+        const offset = circumference - (matchPercentage / 100) * circumference;
+        ring.style.transition = 'stroke-dashoffset 1.5s cubic-bezier(0.16, 1, 0.3, 1)';
+        ring.style.strokeDashoffset = offset;
+
+        // Counter animation
+        let count = 0;
+        const interval = setInterval(() => {
+          if (count >= matchPercentage) {
+            clearInterval(interval);
+            $('#conformity-val').textContent = matchPercentage;
+          } else {
+            count += 2;
+            if (count > matchPercentage) count = matchPercentage;
+            $('#conformity-val').textContent = count;
+          }
+        }, 30);
+      }, 100);
+    }
+
+    function downloadCSV() {
+      const headers = ['participant_id', 'condition', 'trial_num', 'pair_id', 'choice', 'chosen_image', 'confidence_1_5', 'rt_ms', 'timestamp'];
+      const rows = state.responses.map(r => headers.map(h => r[h]).join(','));
+      const csv = [headers.join(','), ...rows].join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `experiment_${state.participantId}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // ===========================
+    // EVENT BINDINGS
+    // ===========================
+    document.addEventListener('DOMContentLoaded', () => {
+      $('#consent-check').addEventListener('change', e => {
+        $('#btn-start').disabled = !e.target.checked;
+      });
+      $('#btn-start').addEventListener('click', startExperiment);
+      $('#btn-next').addEventListener('click', nextTrial);
+      $('#btn-download').addEventListener('click', downloadCSV);
+
+      document.addEventListener('click', e => {
+        if (e.target.classList.contains('conf-btn')) {
+          selectConfidence(parseInt(e.target.dataset.val));
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>

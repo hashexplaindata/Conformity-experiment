@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executive Summary — UI Conformity Experiment</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0f1117;
+            color: #f0f2f5;
+        }
+
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            margin: auto;
+            padding: 2.5rem;
+            background: linear-gradient(180deg, #0f1117 0%, #1a1d27 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page::before {
+            content: '';
+            position: absolute;
+            top: -200px;
+            right: -200px;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, transparent 70%);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .title-block h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #6366f1, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+
+        .title-block h2 {
+            font-size: 0.95rem;
+            font-weight: 400;
+            color: #9ca3af;
+            margin-top: 0.25rem;
+        }
+
+        .badge {
+            background: linear-gradient(135deg, #6366f1, #7c3aed);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+
+        .section {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .section-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #6366f1;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+        }
+
+        .card {
+            background: rgba(34, 37, 47, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 1.25rem;
+        }
+
+        .rq {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #e0e7ff;
+            line-height: 1.4;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+        }
+
+        .stat {
+            text-align: center;
+            background: rgba(34, 37, 47, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 1rem 0.5rem;
+        }
+
+        .stat-val {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #a78bfa;
+        }
+
+        .stat-label {
+            font-size: 0.65rem;
+            color: #9ca3af;
+            margin-top: 0.15rem;
+        }
+
+        .stat.highlight .stat-val {
+            color: #22c55e;
+        }
+
+        .findings-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .finding {
+            padding: 0.75rem;
+            background: rgba(34, 37, 47, 0.6);
+            border-radius: 8px;
+            border-left: 3px solid #6366f1;
+        }
+
+        .finding h4 {
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+
+        .finding p {
+            font-size: 0.72rem;
+            color: #9ca3af;
+            line-height: 1.4;
+        }
+
+        .chart-placeholder {
+            background: rgba(34, 37, 47, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 10px;
+            padding: 1.25rem;
+            text-align: center;
+        }
+
+        .bars {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 2rem;
+            height: 120px;
+            margin-bottom: 0.5rem;
+        }
+
+        .bar-group {
+            text-align: center;
+        }
+
+        .bar {
+            width: 60px;
+            border-radius: 6px 6px 0 0;
+            transition: 0.3s;
+        }
+
+        .bar-label {
+            font-size: 0.7rem;
+            color: #9ca3af;
+            margin-top: 0.3rem;
+        }
+
+        .bar-val {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #f0f2f5;
+            margin-bottom: 0.2rem;
+        }
+
+        .implications {
+            font-size: 0.78rem;
+            color: #d1d5db;
+            line-height: 1.6;
+        }
+
+        .implications li {
+            margin-bottom: 0.3rem;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 1.5rem;
+            left: 2.5rem;
+            right: 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.65rem;
+            color: #4b5563;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            padding-top: 0.75rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page">
+        <div class="header">
+            <div class="title-block">
+                <h1>Does "AI Recommended" Change<br>What Users Choose?</h1>
+                <h2>UI Conformity Experiment — Executive Summary</h2>
+            </div>
+            <span class="badge">2026 Research</span>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Research Question</div>
+            <div class="card">
+                <p class="rq">Does adding an "AI Recommended" label to a UI option increase the likelihood that users
+                    select it, even when both options are equivalent in design quality?</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Key Results</div>
+            <div class="stats-row">
+                <div class="stat">
+                    <div class="stat-val">50</div>
+                    <div class="stat-label">Participants</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-val">45%</div>
+                    <div class="stat-label">Control Rate</div>
+                </div>
+                <div class="stat highlight">
+                    <div class="stat-val">72%</div>
+                    <div class="stat-label">AI Label Rate</div>
+                </div>
+                <div class="stat highlight">
+                    <div class="stat-val">+27pp</div>
+                    <div class="stat-label">Effect Size</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Visual Comparison</div>
+            <div class="chart-placeholder">
+                <div class="bars">
+                    <div class="bar-group">
+                        <div class="bar-val">45%</div>
+                        <div class="bar" style="height:54px; background:#6366f1;"></div>
+                        <div class="bar-label">Control</div>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar-val">72%</div>
+                        <div class="bar" style="height:86px; background: linear-gradient(180deg, #a78bfa, #6366f1);">
+                        </div>
+                        <div class="bar-label">AI Label</div>
+                    </div>
+                </div>
+                <p style="font-size:0.7rem; color:#6b7280;">% selecting AI-preferred option | z = -5.374, p < .0001 |
+                        Cohen's h=0.545</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Key Findings</div>
+            <div class="findings-grid">
+                <div class="finding">
+                    <h4>Significant Label Effect</h4>
+                    <p>Participants in the AI condition selected the labeled option 72% of the time vs. 45% in control
+                        (p < .0001, medium-large effect).</p>
+                </div>
+                <div class="finding">
+                    <h4>Higher Confidence</h4>
+                    <p>AI-label participants reported higher confidence in their choices (M = 3.8 vs. 3.2), suggesting
+                        perceived decision support.</p>
+                </div>
+                <div class="finding">
+                    <h4>Consistent Across Pairs</h4>
+                    <p>The AI label effect was observed across all 8 UI scenarios, from product cards to navigation
+                        menus.</p>
+                </div>
+                <div class="finding">
+                    <h4>Design Implications</h4>
+                    <p>AI authority labels can meaningfully shift user preferences, raising ethical questions about
+                        responsible labeling.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Product Implications</div>
+            <div class="card">
+                <ul class="implications">
+                    <li><strong>Ethical design:</strong> AI labels carry persuasive weight and should be used
+                        responsibly in UI/UX</li>
+                    <li><strong>A/B testing:</strong> Consider how AI framing may bias user preference tests and surveys
+                    </li>
+                    <li><strong>Transparency:</strong> Organizations should disclose when AI labels influence
+                        recommendation surfaces</li>
+                    <li><strong>Policy:</strong> Regulatory frameworks may need to address AI authority cues in consumer
+                        interfaces</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer">
+            <span>UI Conformity Experiment | Between-Subjects Randomized Design</span>
+            <span>N = 50 | 8 UI pairs | 400 total trials | Feb 2026</span>
+        </div>
+    </div>
+</body>
+
+</html>

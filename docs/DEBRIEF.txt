@@ -1,0 +1,35 @@
+DEBRIEF STATEMENT — UI Preference Study
+
+Thank you for participating in this study!
+
+PURPOSE:
+The true purpose of this study was to investigate whether an "AI Recommended" label influences people's choices between user interface designs.
+
+WHAT HAPPENED:
+Participants were randomly assigned to one of two conditions:
+- CONTROL: You viewed pairs of UI designs with neutral labels ("Option A" / "Option B").
+- AI LABEL: You viewed the same pairs, but one option in each pair was marked with a "★ AI Recommended" badge.
+
+The designs in each pair were intentionally made to be similar in quality. We are interested in whether the presence of an authoritative-sounding AI label shifts preferences toward the labeled option, regardless of the design's actual merits.
+
+WHY THIS MATTERS:
+As AI becomes more integrated into technology, understanding how AI-associated labels affect user decisions has important implications for:
+- User interface design ethics
+- Informed decision-making
+- Potential for manipulation through authority cues
+- Responsible AI labeling practices
+
+YOUR DATA:
+Your responses are completely anonymous. No personally identifiable information was collected. Your data will be analyzed along with other participants' data and reported only in aggregate.
+
+WITHDRAWAL:
+If you wish to withdraw your data from the study, please contact the researcher below within 7 days. Provide the Participant ID shown on your completion screen.
+
+QUESTIONS OR CONCERNS:
+Contact: [Your Name]
+Email: [your.email@institution.edu]
+
+Thank you again for contributing to this research!
+
+---
+Version: 1.0 | Date: 2026-02-27

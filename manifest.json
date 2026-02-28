@@ -1,0 +1,113 @@
+{
+    "experiment": "UI Conformity Experiment",
+    "version": "1.0",
+    "generated": "2026-02-27T09:00:00Z",
+    "stitch_project_id": "4451603137931340420",
+    "files": {
+        "code/experiment.html": {
+            "description": "Main experiment page — 8 A/B trials with randomized condition, confidence rating, RT tracking, CSV download",
+            "type": "html",
+            "agent": "FrontendAgent"
+        },
+        "code/redirector.html": {
+            "description": "Landing page that randomly assigns participants 50/50 to control or AI condition",
+            "type": "html",
+            "agent": "FrontendAgent"
+        },
+        "code/style.css": {
+            "description": "CSS design system — dark theme, micro-animations, mockup component styles for all 8 UI pair types",
+            "type": "css",
+            "agent": "DesignerAgent"
+        },
+        "code/generate_sample_data.py": {
+            "description": "Python script to generate synthetic participant data with configurable effect sizes",
+            "type": "python",
+            "agent": "DataPipelineAgent"
+        },
+        "code/run_analysis.py": {
+            "description": "Statistical analysis script — z-test, t-test, Cohen's d/h, 95% CI, SVG charts (stdlib only)",
+            "type": "python",
+            "agent": "AnalyticsAgent"
+        },
+        "analytics/schema.md": {
+            "description": "CSV column definitions and schema documentation",
+            "type": "markdown",
+            "agent": "DataPipelineAgent"
+        },
+        "analytics/sample_data.csv": {
+            "description": "50-participant synthetic dataset (400 rows, 25 control + 25 AI)",
+            "type": "csv",
+            "agent": "DataPipelineAgent"
+        },
+        "analytics/dashboard.html": {
+            "description": "Interactive Chart.js dashboard with drag-and-drop CSV loading and 3 chart types",
+            "type": "html",
+            "agent": "DataPipelineAgent"
+        },
+        "analytics/results.json": {
+            "description": "Structured statistical results from pilot simulation",
+            "type": "json",
+            "agent": "AnalyticsAgent"
+        },
+        "analytics/chart_choice_by_condition.svg": {
+            "description": "Bar chart — % choosing AI-preferred option by condition",
+            "type": "svg",
+            "agent": "AnalyticsAgent"
+        },
+        "analytics/chart_confidence_by_condition.svg": {
+            "description": "Bar chart — mean confidence rating by condition",
+            "type": "svg",
+            "agent": "AnalyticsAgent"
+        },
+        "analytics/chart_rt_distribution.svg": {
+            "description": "Bar chart — mean reaction time by condition",
+            "type": "svg",
+            "agent": "AnalyticsAgent"
+        },
+        "docs/README.md": {
+            "description": "Project overview, folder structure, quickstart guide",
+            "type": "markdown",
+            "agent": "DocumentationAgent"
+        },
+        "docs/RUNBOOK.md": {
+            "description": "Step-by-step operator instructions for running live sessions",
+            "type": "markdown",
+            "agent": "DocumentationAgent"
+        },
+        "docs/METHODS.md": {
+            "description": "Copy-paste Methods section — hypothesis, design, stimuli, procedure, measures, analyses, ethics",
+            "type": "markdown",
+            "agent": "DocumentationAgent"
+        },
+        "docs/CONSENT.txt": {
+            "description": "Informed consent text — copy-paste ready",
+            "type": "text",
+            "agent": "DocumentationAgent"
+        },
+        "docs/DEBRIEF.txt": {
+            "description": "Debrief statement — explains manipulation and provides withdrawal instructions",
+            "type": "text",
+            "agent": "DocumentationAgent"
+        },
+        "docs/IRB_CHECKLIST.md": {
+            "description": "15-point IRB-style ethical review checklist with risk assessment",
+            "type": "markdown",
+            "agent": "SafetyAgent"
+        },
+        "surveys/SURVEY_CONFIG.md": {
+            "description": "Survey configuration notes explaining self-hosted approach and alternative options",
+            "type": "markdown",
+            "agent": "SurveyIntegratorAgent"
+        },
+        "portfolio/executive_summary.html": {
+            "description": "Printable 1-page executive summary with key stats, visual chart, findings, and implications",
+            "type": "html",
+            "agent": "DocumentationAgent"
+        },
+        "manifest.json": {
+            "description": "This file — complete file manifest with descriptions",
+            "type": "json",
+            "agent": "SafetyAgent"
+        }
+    }
+}
