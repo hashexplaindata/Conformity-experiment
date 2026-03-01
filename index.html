@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Behavioral Diagnostic — Algorithmic Conformity</title>
+    <meta name="description"
+        content="A high-fidelity cognitive psychology experiment measuring algorithmic conformity.">
+    <link rel="stylesheet" href="code/style.css">
+</head>
+
+<body>
+
+    <!-- ====== WELCOME SCREEN ====== -->
+    <div id="screen-welcome" class="screen active">
+        <div class="card">
+            <h1>UI Preference Study</h1>
+            <p class="subtitle">You will be shown 6 pairs of user interface designs.
+                For each pair, select the design you find more appealing.</p>
+            <p class="meta">This takes approximately 2 minutes. All data is anonymous and stored locally.</p>
+            <button id="btn-start" class="btn">Begin Experiment</button>
+        </div>
+    </div>
+
+    <!-- ====== TRIAL SCREEN ====== -->
+    <div id="screen-trial" class="screen">
+        <div style="width:100%;max-width:960px;margin:0 auto;text-align:center;">
+            <div class="progress-bar-track">
+                <div class="progress-bar-fill" id="progress-fill"></div>
+            </div>
+            <div class="trial-counter" id="trial-counter">TRIAL 1 OF 6</div>
+            <h2 class="trial-prompt">Which design do you prefer?</h2>
+            <p class="trial-hint">Click on the design you find more effective or appealing.</p>
+            <div class="trial-grid" id="trial-grid">
+                <!-- Dynamically injected by experiment.js -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== COMPLETION SCREEN ====== -->
+    <div id="screen-complete" class="screen">
+        <div class="card">
+            <h1>Thank You</h1>
+            <p class="subtitle">Your responses have been recorded.</p>
+
+            <div class="results-grid">
+                <div class="result-card">
+                    <div class="result-label" id="ring-label">CONFORMITY SCORE</div>
+                    <div class="ring-wrap">
+                        <svg viewBox="0 0 100 100">
+                            <circle class="ring-bg" cx="50" cy="50" r="40"></circle>
+                            <circle class="ring-fg" id="ring-fg" cx="50" cy="50" r="40" stroke-dasharray="251.2"
+                                stroke-dashoffset="251.2"></circle>
+                        </svg>
+                        <div class="ring-val" id="ring-val">0%</div>
+                    </div>
+                    <div class="result-sub" id="ring-sub">Matched AI recommendations</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-label">DECISION SPEED</div>
+                    <div class="result-value"><span id="speed-value">0</span>s</div>
+                    <div class="result-sub">Average time per trial</div>
+                </div>
+            </div>
+
+            <div
+                style="margin-top:1.5rem;padding:1.25rem;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;text-align:left;">
+                <div
+                    style="font-size:0.78rem;font-weight:600;color:var(--accent-blue);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.5rem;">
+                    Study Details</div>
+                <p style="font-size:0.9rem;color:var(--text-secondary);margin-bottom:0.4rem;">You completed all 6
+                    trials.</p>
+                <p style="font-size:0.85rem;color:var(--text-muted);">
+                    <strong style="color:var(--text-secondary)">Condition:</strong> <span id="result-condition"></span>
+                    &nbsp;|&nbsp;
+                    <strong style="color:var(--text-secondary)">PID:</strong> <span id="result-pid"
+                        style="font-family:monospace;font-size:0.75rem;"></span>
+                </p>
+            </div>
+
+            <button id="btn-download" class="btn">Download Telemetry (CSV)</button>
+            <a id="csv-anchor"></a>
+        </div>
+    </div>
+
+    <script src="code/experiment.js"></script>
+</body>
+
+</html>

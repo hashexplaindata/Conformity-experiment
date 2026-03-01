@@ -181,8 +181,18 @@ function showScreen(id) {
 
 // ---- Start ----
 function startExperiment() {
-    // Between-subjects randomization
-    state.condition = CFG.CONDITIONS[Math.random() < 0.5 ? 0 : 1];
+    // Between-subjects condition assignment via URL parameter
+    const params = new URLSearchParams(window.location.search);
+    const urlCondition = params.get('condition');
+
+    if (urlCondition === 'ai') {
+        state.condition = CFG.CONDITIONS[1]; // 'AI_Labeled'
+    } else if (urlCondition === 'control') {
+        state.condition = CFG.CONDITIONS[0]; // 'Control'
+    } else {
+        // Fallback: if no valid parameter, randomly assign (preserves backward compatibility)
+        state.condition = CFG.CONDITIONS[Math.random() < 0.5 ? 0 : 1];
+    }
     state.trialOrder = shuffle([...Array(CFG.NUM_TRIALS).keys()]);
     state.currentTrial = 0;
     showScreen('screen-trial');
