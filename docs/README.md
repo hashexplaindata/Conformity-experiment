@@ -18,25 +18,16 @@ This experiment tests whether an "AI Recommended" label influences users' UI des
 ## Quickstart
 
 1. Open `docs/RUNBOOK.md` and follow Step 1
-2. Open `code/redirector.html` in a browser (or serve via a local server)
-3. Participants are auto-assigned to control or AI condition
-4. After collecting responses, load CSVs into `analytics/dashboard.html`
-5. Run `python code/run_analysis.py` for statistical analysis
-
-## Stitch Design Project
-
-UI mockup pairs were generated using Google Stitch:
-
-- **Project ID:** `4451603137931340420`
-- **Screens:** 14+ high-fidelity UI mockups across 8 design scenarios
+2. Open `http://localhost:8000/code/index.html?condition=control` (Control)
+3. Open `http://localhost:8000/code/index.html?condition=ai` (Treatment)
+4. After collecting responses, data is synced to Firebase and available via CSV download.
 
 ## Key Files
 
 | File | Purpose |
 |------|---------|
-| `code/experiment.html` | Main experiment page (loads via URL params) |
-| `code/redirector.html` | 50/50 random condition assignment |
-| `code/generate_sample_data.py` | Generate synthetic test data |
+| `code/index.html` | Unified experiment page (loads via URL params) |
+| `code/experiment.js` | Logic for randomization, trials, and Firebase sync |
 | `code/run_analysis.py` | Statistical analysis (z-test, t-test, Cohen's d/h) |
 | `analytics/dashboard.html` | Interactive Chart.js results dashboard |
 | `analytics/sample_data.csv` | 50-participant synthetic dataset |

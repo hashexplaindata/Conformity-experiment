@@ -6,13 +6,30 @@
 
 'use strict';
 
-// ---- Configuration ----
+// ---- Configuration & Condition ----
+const params = new URLSearchParams(window.location.search);
 const CFG = Object.freeze({
     NUM_TRIALS: 6,
-    CONDITIONS: ['Control', 'AI_Labeled'],
+    CONDITION: params.get('condition') === 'ai' ? 'AI_Labeled' : 'Control',
+    // --- FIREBASE CONFIGURATION ---
+    FIREBASE: {
+        apiKey: "AIzaSyASh34UQq-gOOgEkmGMZcnybxRrSDuF6yU",
+        authDomain: "conformity-experiment.firebaseapp.com",
+        projectId: "conformity-experiment",
+        storageBucket: "conformity-experiment.firebasestorage.app",
+        messagingSenderId: "197222848320",
+        appId: "1:197222848320:web:0afaeb8953330c11cbcca5"
+    }
 });
 
-// ---- Participant ID (RFC4122 v4 UUID) ----
+// Initialize Firebase (if config is provided)
+let db = null;
+if (CFG.FIREBASE.apiKey !== "YOUR_API_KEY") {
+    firebase.initializeApp(CFG.FIREBASE);
+    db = firebase.firestore();
+}
+
+// ---- Participant & State ----
 function generatePID() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
         const r = Math.random() * 16 | 0;
@@ -20,335 +37,299 @@ function generatePID() {
     });
 }
 
-// ---- Fisher-Yates Shuffle ----
-function shuffle(arr) {
-    const a = [...arr];
-    for (let i = a.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
-}
-
-// ============================================================
-// TRIAL DEFINITIONS (6 Geometric-Mirror Pairs)
-// Each pair differs only in internal content/color, not layout.
-// ============================================================
-const TRIALS = [
-    // Trial 1: Dashboard — Bar chart colors differ
-    {
-        id: 'T1_Dashboard',
-        renderA: () => renderDashboard('#3B82F6', [45, 70, 55, 80, 62, 75]),
-        renderB: () => renderDashboard('#8B5CF6', [75, 62, 80, 55, 70, 45]),
-    },
-    // Trial 2: Pricing — Featured tier position differs
-    {
-        id: 'T2_Pricing',
-        renderA: () => renderPricing('basic'),
-        renderB: () => renderPricing('pro'),
-    },
-    // Trial 3: Signup Form — CTA text/color differs
-    {
-        id: 'T3_Signup',
-        renderA: () => renderForm('Create Account', '#3B82F6'),
-        renderB: () => renderForm('Get Started Free', '#8B5CF6'),
-    },
-    // Trial 4: Settings Panel — Toggle states differ
-    {
-        id: 'T4_Settings',
-        renderA: () => renderSettings([true, false, true, false]),
-        renderB: () => renderSettings([false, true, false, true]),
-    },
-    // Trial 5: Navigation Sidebar — Active item position differs
-    {
-        id: 'T5_Navigation',
-        renderA: () => renderNav(0, '#EEF2FF', '#6366F1'),
-        renderB: () => renderNav(2, '#FEF3C7', '#D97706'),
-    },
-    // Trial 6: Notification Page — Banner placement differs
-    {
-        id: 'T6_Notification',
-        renderA: () => renderNotification('top'),
-        renderB: () => renderNotification('bottom'),
-    },
-];
-
-// ============================================================
-// MOCKUP RENDERERS — Geometric Mirrors
-// Identical DOM structure, only data/colors change.
-// ============================================================
-
-function renderDashboard(barColor, heights) {
-    const bars = heights.map(h =>
-        `<div class="mock-bar" style="height:${h}px;background:${barColor};"></div>`
-    ).join('');
-    return `
-    <div class="mockup">
-      <div class="mock-header">Revenue Overview</div>
-      <div class="mock-kpi-row">
-        <div class="mock-kpi"><div class="mock-kpi-val">$42.8k</div><div class="mock-kpi-label">Revenue</div></div>
-        <div class="mock-kpi"><div class="mock-kpi-val">+12.5%</div><div class="mock-kpi-label">Growth</div></div>
-      </div>
-      <div class="mock-chart-area">${bars}</div>
-    </div>`;
-}
-
-function renderPricing(featured) {
-    const plans = [
-        { name: 'Basic', price: '$9', features: ['5 Projects', '10 GB', 'Email Support'], color: '#3B82F6' },
-        { name: 'Pro', price: '$29', features: ['Unlimited', '100 GB', 'Priority', 'Analytics'], color: '#6366F1' },
-        { name: 'Team', price: '$79', features: ['Everything', '1 TB', 'Dedicated Mgr', 'API', 'SLA'], color: '#8B5CF6' },
-    ];
-    const cards = plans.map(p => {
-        const isFeat = p.name.toLowerCase() === featured;
-        return `<div class="mock-plan ${isFeat ? 'featured' : ''}">
-      <div class="mock-plan-name">${p.name}</div>
-      <div class="mock-plan-price">${p.price}<span>/mo</span></div>
-      <ul class="mock-plan-features">${p.features.map(f => `<li>✓ ${f}</li>`).join('')}</ul>
-      <div class="mock-plan-btn" style="background:${p.color}">Select</div>
-    </div>`;
-    }).join('');
-    return `<div class="mockup"><div class="mock-header">Choose Your Plan</div><div class="mock-pricing-grid">${cards}</div></div>`;
-}
-
-function renderForm(cta, color) {
-    return `
-    <div class="mockup">
-      <div class="mock-header">Join Us</div>
-      <div class="mock-form-field">Full Name</div>
-      <div class="mock-form-field">Email Address</div>
-      <div class="mock-form-field">Password</div>
-      <div class="mock-form-btn" style="background:${color}">${cta}</div>
-    </div>`;
-}
-
-function renderSettings(toggleStates) {
-    const labels = ['Notifications', 'Dark Mode', 'Location Access', 'Auto-Update'];
-    const rows = labels.map((l, i) => {
-        const on = toggleStates[i];
-        return `<div class="mock-setting-row">
-      <span class="mock-setting-label">${l}</span>
-      <div class="mock-toggle ${on ? 'on' : ''}" style="background:${on ? '#6366F1' : '#d1d5db'}"></div>
-    </div>`;
-    }).join('');
-    return `<div class="mockup"><div class="mock-header">Settings</div>${rows}</div>`;
-}
-
-function renderNav(activeIdx, activeBg, activeColor) {
-    const items = [
-        { icon: '⌂', label: 'Home' },
-        { icon: '▦', label: 'Dashboard' },
-        { icon: '◎', label: 'Projects' },
-        { icon: '✉', label: 'Messages' },
-        { icon: '⚙', label: 'Settings' },
-    ];
-    const navHtml = items.map((it, i) => {
-        const isActive = i === activeIdx;
-        return `<div class="mock-nav-item ${isActive ? 'active' : ''}" style="${isActive ? `background:${activeBg};color:${activeColor}` : ''}">
-      <span class="mock-nav-icon">${it.icon}</span><span>${it.label}</span>
-    </div>`;
-    }).join('');
-    return `<div class="mockup" style="padding:1rem"><div class="mock-header" style="color:#6366F1;font-size:0.9rem;margin-bottom:0.75rem;padding-bottom:0.5rem;border-bottom:1px solid #f3f4f6">AppName</div>${navHtml}</div>`;
-}
-
-function renderNotification(bannerPos) {
-    const banner = `<div class="mock-banner">🚀 New feature available! <span class="mock-banner-link">Learn More</span></div>`;
-    const content = `<div style="padding:0.75rem 1rem"><div class="mock-header">Welcome Back</div><div class="mock-content-block"></div><div class="mock-content-block"></div><div class="mock-content-block short"></div></div>`;
-    const inner = bannerPos === 'top' ? banner + content : content + banner;
-    return `<div class="mockup" style="padding:0;overflow:hidden">${inner}</div>`;
-}
-
-// ============================================================
-// EXPERIMENT STATE MACHINE
-// ============================================================
-const state = {
+const STATE = {
     pid: generatePID(),
-    condition: null,              // 'Control' or 'AI_Labeled'
-    trialOrder: [],               // shuffled indices
+    condition: CFG.CONDITION,
+    baselineFamiliarity: 0,
     currentTrial: 0,
-    renderTimestamp: 0,           // performance.now() at render
-    responses: [],                // telemetry array
+    results: [],
+    startTime: 0,
+    trialStartTime: 0
 };
 
-// ---- DOM Shortcuts ----
-const $ = s => document.querySelector(s);
-const $$ = s => document.querySelectorAll(s);
+// ============================================================
+// TRIAL DEFINITIONS (6 Specified Pairs)
+// ============================================================
+const TRIALS = [
+    {
+        id: 'T1_Schedule',
+        domain: 'Information Density',
+        renderA: () => `
+            <div class="mockup">
+                <div class="mock-header">Weekly Schedule</div>
+                <div class="mock-schedule-list">
+                    <div class="mock-schedule-item">CS101: 9:00 AM - 10:30 AM</div>
+                    <div class="mock-schedule-item">MATH202: 11:00 AM - 12:30 PM</div>
+                    <div class="mock-schedule-item">PHYS301: 2:00 PM - 3:30 PM</div>
+                </div>
+            </div>`,
+        renderB: () => `
+            <div class="mockup">
+                <div class="mock-header">Weekly Schedule</div>
+                <div class="mock-schedule-grid">
+                    <div class="mock-schedule-card">CS101<br>9:00</div>
+                    <div class="mock-schedule-card">MATH202<br>11:00</div>
+                    <div class="mock-schedule-card">PHYS301<br>2:00</div>
+                </div>
+            </div>`,
+        targetPos: Math.random() > 0.5 ? 'A' : 'B'
+    },
+    {
+        id: 'T2_Attendance',
+        domain: 'Data Visualization',
+        renderA: () => `
+            <div class="mockup">
+                <div class="mock-header">Attendance</div>
+                <div class="mock-chart-donut">85%</div>
+                <div style="text-align:center;margin-top:0.5rem;font-size:0.8rem;">Present</div>
+            </div>`,
+        renderB: () => `
+            <div class="mockup">
+                <div class="mock-header">Attendance</div>
+                <div class="mock-progress-bar"><div class="mock-progress-fill"></div></div>
+                <div style="text-align:center;margin-top:0.5rem;font-size:0.8rem;">85% Present</div>
+            </div>`,
+        targetPos: Math.random() > 0.5 ? 'A' : 'B'
+    },
+    {
+        id: 'T3_Library',
+        domain: 'Navigation Hierarchy',
+        renderA: () => `
+            <div class="mockup" style="padding-bottom:60px;">
+                <div class="mock-header">Library Portal</div>
+                <div class="mock-nav-bottom">
+                    <span>🏠</span><span>🔍</span><span>🔖</span>
+                </div>
+            </div>`,
+        renderB: () => `
+            <div class="mockup">
+                <div class="mock-nav-hamburger"><span></span><span></span><span></span></div>
+                <div class="mock-header" style="margin-left:3rem;">Library Portal</div>
+                <div style="margin-top:2rem;opacity:0.3;">Main Content Area...</div>
+            </div>`,
+        targetPos: Math.random() > 0.5 ? 'A' : 'B'
+    },
+    {
+        id: 'T4_News',
+        domain: 'Typographical Dominance',
+        renderA: () => `
+            <div class="mockup">
+                <div class="mock-news-serif">Campus News: New Research Grant Announced</div>
+                <div style="margin-top:1rem;font-size:0.8rem;color:var(--text-secondary);">The university has received a $2M grant for AI research...</div>
+            </div>`,
+        renderB: () => `
+            <div class="mockup">
+                <div class="mock-news-sans">Campus News: New Research Grant Announced</div>
+                <div style="margin-top:1rem;font-size:0.8rem;color:var(--text-secondary);">The university has received a $2M grant for AI research...</div>
+            </div>`,
+        targetPos: Math.random() > 0.5 ? 'A' : 'B'
+    },
+    {
+        id: 'T5_Enrollment',
+        domain: 'Interaction Design',
+        renderA: () => `
+            <div class="mockup">
+                <div class="mock-header">Course Registration</div>
+                <div class="mock-btn-wide">Enroll Now</div>
+            </div>`,
+        renderB: () => `
+            <div class="mockup">
+                <div class="mock-header">Course Registration</div>
+                <div class="mock-fab">✨</div>
+            </div>`,
+        targetPos: Math.random() > 0.5 ? 'A' : 'B'
+    },
+    {
+        id: 'T6_Professor',
+        domain: 'Qualitative Feedback',
+        renderA: () => `
+            <div class="mockup">
+                <div class="mock-header">Rate Professor</div>
+                <div class="mock-stars">★★★★★</div>
+            </div>`,
+        renderB: () => `
+            <div class="mockup">
+                <div class="mock-header">Rate Professor</div>
+                <input type="range" class="mock-slider" value="8" min="1" max="10">
+                <div style="display:flex;justify-content:space-between;font-size:0.6rem;margin-top:0.5rem;"><span>1</span><span>10</span></div>
+            </div>`,
+        targetPos: Math.random() > 0.5 ? 'A' : 'B'
+    }
+];
 
-function showScreen(id) {
-    $$('.screen').forEach(s => s.classList.remove('active'));
-    $(`#${id}`).classList.add('active');
+// ---- DOM Elements ----
+const EL = {
+    screenWelcome: document.getElementById('screen-welcome'),
+    screenTrial: document.getElementById('screen-trial'),
+    screenComplete: document.getElementById('screen-complete'),
+    trialGrid: document.getElementById('trial-grid'),
+    trialCounter: document.getElementById('trial-counter'),
+    progressFill: document.getElementById('progress-fill'),
+    btnStart: document.getElementById('btn-start'),
+    baselineBtns: document.querySelectorAll('.btn-option'),
+    rationaleText: document.getElementById('rationale-text'),
+    btnSubmitData: document.getElementById('btn-submit-data'),
+    finalSuccess: document.getElementById('final-success'),
+    btnDownload: document.getElementById('btn-download')
+};
+
+// ---- Initialization ----
+function init() {
+    EL.baselineBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            EL.baselineBtns.forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            STATE.baselineFamiliarity = parseInt(btn.dataset.val);
+            EL.btnStart.disabled = false;
+        });
+    });
+
+    EL.btnStart.addEventListener('click', startExperiment);
+    EL.btnSubmitData.addEventListener('click', submitFinalTelemetry);
+    EL.btnDownload.addEventListener('click', downloadCSV);
+
+    console.log(`Initialized in ${STATE.condition} condition. PID: ${STATE.pid}`);
 }
 
-// ---- Start ----
 function startExperiment() {
-    // Between-subjects randomization
-    state.condition = CFG.CONDITIONS[Math.random() < 0.5 ? 0 : 1];
-    state.trialOrder = shuffle([...Array(CFG.NUM_TRIALS).keys()]);
-    state.currentTrial = 0;
-    showScreen('screen-trial');
-    renderTrial();
+    EL.screenWelcome.classList.remove('active');
+    EL.screenTrial.classList.add('active');
+    STATE.startTime = performance.now();
+    loadTrial();
 }
 
-// ---- Render a Trial ----
-function renderTrial() {
-    const idx = state.trialOrder[state.currentTrial];
-    const trial = TRIALS[idx];
-    const trialNum = state.currentTrial + 1;
+function loadTrial() {
+    const trial = TRIALS[STATE.currentTrial];
+    EL.trialCounter.innerText = `TRIAL ${STATE.currentTrial + 1} OF ${CFG.NUM_TRIALS}`;
+    EL.progressFill.style.width = `${((STATE.currentTrial) / CFG.NUM_TRIALS) * 100}%`;
 
-    // Update progress
-    $('#trial-counter').textContent = `TRIAL ${trialNum} OF ${CFG.NUM_TRIALS}`;
-    $('#progress-fill').style.width = `${(trialNum / CFG.NUM_TRIALS) * 100}%`;
+    const leftIsA = Math.random() > 0.5;
+    const htmlA = trial.renderA();
+    const htmlB = trial.renderB();
 
-    // Randomize left/right placement
-    const swapSides = Math.random() > 0.5;
-    const leftLabel = swapSides ? 'B' : 'A';
-    const rightLabel = swapSides ? 'A' : 'B';
-    const leftHtml = swapSides ? trial.renderB() : trial.renderA();
-    const rightHtml = swapSides ? trial.renderA() : trial.renderB();
+    EL.trialGrid.innerHTML = leftIsA ? htmlA + htmlB : htmlB + htmlA;
 
-    // Determine which side gets the AI badge (if AI_Labeled)
-    // "Target" = the side that receives the badge
-    const targetSide = Math.random() > 0.5 ? 'left' : 'right';
-    const targetOption = targetSide === 'left' ? leftLabel : rightLabel;
-
-    // Build badge HTML
-    const badgeHtml = state.condition === 'AI_Labeled'
-        ? '<div class="ai-badge">AI Recommended</div>'
-        : '';
-
-    // Inject into grid
-    $('#trial-grid').innerHTML = `
-    <div class="option-wrapper" data-choice="${leftLabel}" id="opt-left">
-      ${targetSide === 'left' ? badgeHtml : ''}
-      <div class="option-label">Option ${leftLabel}</div>
-      ${leftHtml}
-    </div>
-    <div class="option-wrapper" data-choice="${rightLabel}" id="opt-right">
-      ${targetSide === 'right' ? badgeHtml : ''}
-      <div class="option-label">Option ${rightLabel}</div>
-      ${rightHtml}
-    </div>
-  `;
-
-    // Store target option position for telemetry
-    state._targetOption = targetOption;
-
-    // HIGH-FIDELITY TIMESTAMP: mark render completion
-    state.renderTimestamp = performance.now();
-
-    // Bind click handlers
-    $$('.option-wrapper').forEach(el => {
-        el.addEventListener('click', () => handleChoice(el));
-    });
-}
-
-// ---- Handle User Choice ----
-function handleChoice(el) {
-    // HIGH-FIDELITY TIMESTAMP: capture reaction time
-    const clickTime = performance.now();
-    const rt = Math.round((clickTime - state.renderTimestamp) * 100) / 100; // 2 decimal places
-
-    const idx = state.trialOrder[state.currentTrial];
-    const trial = TRIALS[idx];
-    const choice = el.dataset.choice;
-
-    // Visual feedback
-    $$('.option-wrapper').forEach(o => o.classList.remove('selected'));
-    el.classList.add('selected');
-
-    // Push telemetry row
-    state.responses.push({
-        Participant_ID: state.pid,
-        Condition: state.condition,
-        Trial_Number: state.currentTrial + 1,
-        Trial_ID: trial.id,
-        Target_Option_Position: state._targetOption,
-        User_Choice: choice,
-        Chose_Target: choice === state._targetOption ? 1 : 0,
-        Reaction_Time_ms: rt,
-    });
-
-    // Advance after brief visual feedback delay
-    setTimeout(() => {
-        state.currentTrial++;
-        if (state.currentTrial < CFG.NUM_TRIALS) {
-            renderTrial();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else {
-            showComplete();
-        }
-    }, 350);
-}
-
-// ---- Completion Screen ----
-function showComplete() {
-    // Compute personal metrics
-    let matchCount = 0;
-    let totalRt = 0;
-    state.responses.forEach(r => {
-        totalRt += r.Reaction_Time_ms;
-        if (r.Chose_Target === 1) matchCount++;
-    });
-
-    const avgRt = (totalRt / CFG.NUM_TRIALS / 1000).toFixed(1);
-    const matchPct = Math.round((matchCount / CFG.NUM_TRIALS) * 100);
-
-    // Populate
-    $('#result-condition').textContent = state.condition === 'AI_Labeled' ? 'AI Label (Treatment)' : 'Control (No Label)';
-    $('#result-pid').textContent = state.pid;
-    $('#speed-value').textContent = avgRt;
-
-    if (state.condition === 'AI_Labeled') {
-        $('#ring-label').textContent = 'CONFORMITY SCORE';
-        $('#ring-sub').textContent = 'Matched AI recommendations';
-    } else {
-        $('#ring-label').textContent = 'PATTERN BIAS';
-        $('#ring-sub').textContent = 'Selected target option';
+    if (STATE.condition === 'AI_Labeled') {
+        const targetSide = (leftIsA && trial.targetPos === 'A') || (!leftIsA && trial.targetPos === 'B') ? 0 : 1;
+        const targetEl = EL.trialGrid.children[targetSide];
+        const badge = document.createElement('div');
+        badge.className = 'ai-badge';
+        badge.innerHTML = '<span>✨</span> AI Suggested';
+        targetEl.appendChild(badge);
     }
 
-    showScreen('screen-complete');
+    STATE.trialStartTime = performance.now();
 
-    // Animate ring
-    const circumference = 2 * Math.PI * 40;
-    const ring = $('#ring-fg');
-    ring.setAttribute('stroke-dasharray', `${circumference}`);
-    ring.setAttribute('stroke-dashoffset', `${circumference}`);
-
-    requestAnimationFrame(() => {
-        setTimeout(() => {
-            const offset = circumference - (matchPct / 100) * circumference;
-            ring.style.strokeDashoffset = offset;
-            // Counter animation
-            let count = 0;
-            const interval = setInterval(() => {
-                count += 2;
-                if (count > matchPct) count = matchPct;
-                $('#ring-val').textContent = count + '%';
-                if (count >= matchPct) clearInterval(interval);
-            }, 25);
-        }, 100);
+    Array.from(EL.trialGrid.children).forEach((el, idx) => {
+        el.addEventListener('click', () => handleChoice(idx, leftIsA));
     });
 }
 
-// ---- CSV Export (Edge-Computed, No Server) ----
-function exportCSV() {
-    const headers = ['Participant_ID', 'Condition', 'Trial_Number', 'Trial_ID', 'Target_Option_Position', 'User_Choice', 'Chose_Target', 'Reaction_Time_ms'];
-    const rows = state.responses.map(r => headers.map(h => r[h]).join(','));
-    const csvString = [headers.join(','), ...rows].join('\n');
+function handleChoice(selectedIdx, leftIsA) {
+    const rt = performance.now() - STATE.trialStartTime;
+    const trial = TRIALS[STATE.currentTrial];
+    
+    const selection = (selectedIdx === 0 && leftIsA) || (selectedIdx === 1 && !leftIsA) ? 'A' : 'B';
+    const choseTarget = selection === trial.targetPos;
 
-    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const anchor = $('#csv-anchor');
-    anchor.href = url;
-    anchor.download = 'behavioral_telemetry.csv';
-    anchor.click();
-    URL.revokeObjectURL(url);
+    STATE.results.push({
+        participant_id: STATE.pid,
+        experimental_condition: STATE.condition === 'AI_Labeled' ? 1 : 0,
+        ai_familiarity: STATE.baselineFamiliarity,
+        trial_sequence: STATE.currentTrial + 1,
+        ui_domain: trial.domain,
+        trial_id: trial.id,
+        reaction_time_ms: rt.toFixed(2),
+        user_selection: selection,
+        ai_badge_position: trial.targetPos,
+        chose_target: choseTarget ? 1 : 0
+    });
+
+    STATE.currentTrial++;
+
+    if (STATE.currentTrial < CFG.NUM_TRIALS) {
+        loadTrial();
+    } else {
+        completeExperiment();
+    }
 }
 
-// ============================================================
-// EVENT BINDINGS
-// ============================================================
-window.addEventListener('DOMContentLoaded', () => {
-    $('#btn-start').addEventListener('click', startExperiment);
-    $('#btn-download').addEventListener('click', exportCSV);
-});
+function completeExperiment() {
+    EL.screenTrial.classList.remove('active');
+    EL.screenComplete.classList.add('active');
+    
+    const totalTrials = STATE.results.length;
+    const conformityCount = STATE.results.filter(r => r.chose_target === 1).length;
+    const conformityScore = Math.round((conformityCount / totalTrials) * 100);
+    
+    document.getElementById('ring-val').innerText = `${conformityScore}%`;
+    document.getElementById('ring-fg').style.strokeDashoffset = 251.2 - (251.2 * conformityScore / 100);
+    
+    const avgSpeed = (STATE.results.reduce((acc, r) => acc + parseFloat(r.reaction_time_ms), 0) / totalTrials / 1000).toFixed(2);
+    document.getElementById('speed-value').innerText = avgSpeed;
+    
+    document.getElementById('result-condition').innerText = STATE.condition;
+    document.getElementById('result-pid').innerText = STATE.pid;
+}
+
+async function submitFinalTelemetry() {
+    const rationale = EL.rationaleText.value.trim();
+    if (!rationale) {
+        alert("Please provide a brief rationale before submitting.");
+        return;
+    }
+
+    STATE.results.forEach(r => r.semantic_justification = rationale);
+
+    EL.btnSubmitData.disabled = true;
+    EL.btnSubmitData.innerText = "Synchronizing to Firebase...";
+
+    try {
+        if (db) {
+            // Write each trial as a separate document in the 'telemetry' collection
+            const batch = db.batch();
+            STATE.results.forEach(r => {
+                const docRef = db.collection('telemetry').doc();
+                batch.set(docRef, {
+                    ...r,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            });
+            await batch.commit();
+            console.log("Payload synchronized to Firebase Firestore.");
+        } else {
+            console.log("Firebase not initialized. Payload (Tidy Data Long Format):", STATE.results);
+            await new Promise(resolve => setTimeout(resolve, 1500));
+        }
+        
+        document.getElementById('rationale-container').style.display = 'none';
+        EL.finalSuccess.style.display = 'block';
+    } catch (err) {
+        console.error("Firebase sync failed:", err);
+        alert("Cloud sync failed. Error: " + err.message + "\nPlease download the CSV backup.");
+        EL.btnSubmitData.disabled = false;
+        EL.btnSubmitData.innerText = "Retry Submission";
+    }
+}
+
+function downloadCSV() {
+    const headers = Object.keys(STATE.results[0]);
+    const csvRows = [headers.join(',')];
+    
+    for (const row of STATE.results) {
+        const values = headers.map(header => {
+            const val = row[header];
+            return typeof val === 'string' && val.includes(',') ? `"${val}"` : val;
+        });
+        csvRows.push(values.join(','));
+    }
+    
+    const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `telemetry_${STATE.pid}.csv`;
+    a.click();
+}
+
+window.addEventListener('DOMContentLoaded', init);

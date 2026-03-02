@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Behavioral Diagnostic — Algorithmic Conformity</title>
     <meta name="description"
         content="A high-fidelity cognitive psychology experiment measuring algorithmic conformity.">
@@ -18,8 +18,20 @@
             <h1>UI Preference Study</h1>
             <p class="subtitle">You will be shown 6 pairs of user interface designs.
                 For each pair, select the design you find more appealing.</p>
-            <p class="meta">This takes approximately 2 minutes. All data is anonymous and stored locally.</p>
-            <button id="btn-start" class="btn">Begin Experiment</button>
+            
+            <div style="margin-bottom: 2rem; text-align: left;">
+                <p style="font-size: 0.9rem; margin-bottom: 0.8rem; font-weight: 600;">How familiar are you with AI-driven recommendations?</p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                    <button class="btn-option" data-val="1">1. Not at all</button>
+                    <button class="btn-option" data-val="2">2. Slightly</button>
+                    <button class="btn-option" data-val="3">3. Moderately</button>
+                    <button class="btn-option" data-val="4">4. Very Familiar</button>
+                </div>
+                <input type="hidden" id="baseline-familiarity" value="0">
+            </div>
+
+            <p class="meta">This takes approximately 2 minutes. All data is anonymous.</p>
+            <button id="btn-start" class="btn" disabled>Begin Experiment</button>
         </div>
     </div>
 
@@ -79,11 +91,22 @@
                 </p>
             </div>
 
-            <button id="btn-download" class="btn">Download Telemetry (CSV)</button>
-            <a id="csv-anchor"></a>
+            <div id="rationale-container" style="margin-top: 1.5rem; text-align: left;">
+                <p style="font-size: 0.9rem; font-weight: 600; margin-bottom: 0.5rem;">Briefly explain your decision-making process:</p>
+                <textarea id="rationale-text" placeholder="I chose based on..." style="width: 100%; height: 80px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: white; padding: 0.75rem; font-family: inherit; resize: none; margin-bottom: 1rem;"></textarea>
+                <button id="btn-submit-data" class="btn" style="width: 100%;">Submit Final Telemetry</button>
+            </div>
+
+            <div id="final-success" style="display:none; margin-top: 1.5rem;">
+                <p style="color: var(--accent-blue); font-weight: 600;">Data successfully synchronized to cloud.</p>
+                <button id="btn-download" class="btn" style="margin-top: 1rem;">Download Backup (CSV)</button>
+                <a id="csv-anchor" style="display:none;"></a>
+            </div>
         </div>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
     <script src="experiment.js"></script>
 </body>
 

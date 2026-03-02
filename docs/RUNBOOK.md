@@ -9,23 +9,23 @@ Step-by-step operator instructions for running a live experiment session.
 ### Step 1: Start Local Server
 
 ```bash
-cd "Conformity experiment"
+cd "Conformity-experiment"
 python -m http.server 8000
 ```
 
-The experiment is now accessible at `http://localhost:8000/code/redirector.html`
+The experiment is now accessible at `http://localhost:8000/code/index.html`
 
 ### Step 2: Verify Both Conditions
 
-- Open `http://localhost:8000/code/experiment.html?cond=control`
-  - Confirm: No "AI Recommended" badges visible
-- Open `http://localhost:8000/code/experiment.html?cond=ai`
-  - Confirm: "★ AI Recommended" badges visible on designated options
+- **Control Link**: `http://localhost:8000/code/index.html?condition=control`
+  - Confirm: No "AI Suggested" badges visible.
+- **AI Link**: `http://localhost:8000/code/index.html?condition=ai`
+  - Confirm: "✨ AI Suggested" badges visible on designated options.
 
 ### Step 3: Prepare Distribution Link
 
-- **For in-person sessions:** Share `http://[YOUR_IP]:8000/code/redirector.html`
-- **For remote sessions:** Deploy to GitHub Pages or Netlify (see Deployment below)
+- **Cohort A (Control)**: Share the Control Link or its QR code.
+- **Cohort B (AI)**: Share the AI Link or its QR code.
 
 ---
 

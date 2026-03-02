@@ -107,32 +107,53 @@ body {
 
 /* --- Button --- */
 .btn {
-    display: inline-block;
-    background: var(--text-primary);
-    color: var(--bg-void);
+    background: var(--accent-blue);
+    color: white;
     border: none;
-    padding: 0.85rem 2.5rem;
-    border-radius: 30px;
-    font-size: 1rem;
+    padding: 1.25rem 2.5rem;
+    font-size: 1.1rem;
     font-weight: 600;
+    border-radius: var(--radius-sm);
     cursor: pointer;
     transition: var(--spring);
-    margin-top: 1.5rem;
+    width: 100%;
+    margin-top: 1rem;
+    box-shadow: 0 8px 24px rgba(41, 151, 255, 0.25);
 }
 
 .btn:hover {
-    transform: scale(1.03);
-    background: #ffffff;
-}
-
-.btn:active {
-    transform: scale(0.97);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(41, 151, 255, 0.4);
+    background: #4dabff;
 }
 
 .btn:disabled {
     opacity: 0.3;
     cursor: not-allowed;
-    transform: none;
+    filter: grayscale(1);
+}
+
+.btn-option {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    padding: 0.75rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: var(--spring);
+}
+
+.btn-option:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: var(--border-hover);
+}
+
+.btn-option.selected {
+    background: var(--accent-blue);
+    color: white;
+    border-color: var(--accent-blue);
+    font-weight: 600;
 }
 
 /* --- Progress Bar --- */
@@ -178,17 +199,14 @@ body {
 
 .trial-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    width: 100%;
-    max-width: 900px;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 1.5rem 0;
 }
 
-@media (max-width: 768px) {
+@media (min-width: 768px) {
     .trial-grid {
-        grid-template-columns: 1fr;
-        max-width: 420px;
-        margin: 0 auto;
+        grid-template-columns: 1fr 1fr;
     }
 }
 
@@ -225,42 +243,22 @@ body {
 /* --- AI Recommended Badge (ABSOLUTE POSITION — NO LAYOUT SHIFT) --- */
 .ai-badge {
     position: absolute;
-    top: -14px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 10;
-    /* Visual styling */
-    background: linear-gradient(135deg, #FF9F0A, #FF453A);
-    color: #fff;
-    font-size: 0.72rem;
+    top: 0.75rem;
+    right: 0.75rem;
+    padding: 0.3rem 0.6rem;
+    background: linear-gradient(135deg, #a855f7 0%, #3b82f6 100%);
+    color: white;
+    border-radius: 9999px;
+    font-size: 0.65rem;
     font-weight: 700;
-    letter-spacing: 0.03em;
-    padding: 0.4rem 1.1rem;
-    border-radius: 20px;
-    white-space: nowrap;
-    box-shadow: 0 4px 16px rgba(255, 69, 58, 0.35);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
     display: flex;
     align-items: center;
-    gap: 0.35rem;
-    /* Subtle animation */
-    animation: badgeGlow 3s ease-in-out infinite alternate;
-    /* PROOF: no margin, no padding-offset, no layout effect */
+    gap: 0.3rem;
+    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.4);
     pointer-events: none;
-}
-
-.ai-badge::before {
-    content: '\2727';
-    font-size: 0.9rem;
-}
-
-@keyframes badgeGlow {
-    0% {
-        box-shadow: 0 4px 16px rgba(255, 69, 58, 0.2);
-    }
-
-    100% {
-        box-shadow: 0 4px 24px rgba(255, 69, 58, 0.55);
-    }
+    z-index: 10;
 }
 
 /* --- Option Label --- */
@@ -280,16 +278,114 @@ body {
    Only internal content/color differs between A and B.
    ============================================================ */
 
-.mockup {
-    background: #ffffff;
-    color: #1f2937;
-    border-radius: 10px;
-    padding: 1.25rem;
-    flex: 1;
+/* --- AI Badge --- */
+.ai-badge {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    padding: 0.3rem 0.6rem;
+    background: linear-gradient(135deg, #a855f7 0%, #3b82f6 100%);
+    color: white;
+    border-radius: 9999px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
     display: flex;
-    flex-direction: column;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    align-items: center;
+    gap: 0.3rem;
+    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.4);
+    pointer-events: none;
+    z-index: 10;
 }
+
+/* --- Layouts & Trials --- */
+.trial-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 1.5rem 0;
+}
+
+@media (min-width: 768px) {
+    .trial-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.mockup {
+    background: var(--bg-card);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    position: relative;
+    cursor: pointer;
+    transition: var(--spring);
+    text-align: left;
+    min-height: 200px;
+    width: 100%;
+}
+
+.mockup:hover {
+    border-color: var(--border-hover);
+    transform: translateY(-4px);
+    background: var(--bg-option);
+}
+
+.mockup.selected {
+    border-color: var(--border-selected);
+    box-shadow: 0 0 24px var(--accent-glow);
+}
+
+/* --- Specific Trials --- */
+.mock-schedule-list { display: flex; flex-direction: column; gap: 0.5rem; }
+.mock-schedule-item { background: rgba(255,255,255,0.05); padding: 0.5rem; border-radius: 4px; font-size: 0.75rem; }
+
+.mock-schedule-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
+.mock-schedule-card { background: rgba(255,255,255,0.05); padding: 0.5rem; border-radius: 8px; font-size: 0.7rem; text-align: center; }
+
+.mock-chart-donut { width: 80px; height: 80px; border-radius: 50%; border: 8px solid var(--accent-blue); display: flex; align-items: center; justify-content: center; margin: 0 auto; font-weight: bold; }
+.mock-progress-bar { width: 100%; height: 12px; background: rgba(255,255,255,0.1); border-radius: 6px; overflow: hidden; margin-top: 1rem; }
+.mock-progress-fill { height: 100%; background: var(--accent-blue); width: 85%; }
+
+.mock-nav-bottom { position: absolute; bottom: 0; left: 0; right: 0; height: 50px; border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; }
+.mock-nav-hamburger { position: absolute; top: 1rem; left: 1rem; width: 24px; height: 18px; display: flex; flex-direction: column; justify-content: space-between; }
+.mock-nav-hamburger span { display: block; height: 2px; width: 100%; background: white; border-radius: 2px; }
+
+.mock-news-serif { font-family: "Georgia", serif; font-weight: bold; font-size: 1.25rem; }
+.mock-news-sans { font-family: "Inter", sans-serif; font-weight: 300; font-size: 1.25rem; letter-spacing: -0.01em; }
+
+.mock-btn-wide { width: 100%; padding: 1rem; background: var(--accent-blue); border-radius: 8px; text-align: center; font-weight: 600; margin-top: 2rem; }
+.mock-fab { position: absolute; bottom: 1rem; right: 1rem; width: 56px; height: 56px; border-radius: 28px; background: var(--accent-blue); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 16px rgba(0,0,0,0.4); }
+
+.mock-stars { display: flex; gap: 4px; font-size: 1.5rem; color: #fbbf24; margin-top: 1rem; }
+.mock-slider { width: 100%; -webkit-appearance: none; background: rgba(255,255,255,0.1); height: 6px; border-radius: 3px; margin-top: 2rem; }
+.mock-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--accent-blue); cursor: pointer; }
+
+/* --- Specific Trials --- */
+.mock-schedule-list { display: flex; flex-direction: column; gap: 0.5rem; }
+.mock-schedule-item { background: rgba(255,255,255,0.05); padding: 0.5rem; border-radius: 4px; font-size: 0.75rem; }
+
+.mock-schedule-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
+.mock-schedule-card { background: rgba(255,255,255,0.05); padding: 0.5rem; border-radius: 8px; font-size: 0.7rem; text-align: center; }
+
+.mock-chart-donut { width: 80px; height: 80px; border-radius: 50%; border: 8px solid var(--accent-blue); display: flex; align-items: center; justify-content: center; margin: 0 auto; font-weight: bold; }
+.mock-progress-bar { width: 100%; height: 12px; background: rgba(255,255,255,0.1); border-radius: 6px; overflow: hidden; margin-top: 1rem; }
+.mock-progress-fill { height: 100%; background: var(--accent-blue); width: 85%; }
+
+.mock-nav-bottom { position: absolute; bottom: 0; left: 0; right: 0; height: 50px; border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; }
+.mock-nav-hamburger { position: absolute; top: 1rem; left: 1rem; width: 24px; height: 18px; display: flex; flex-direction: column; justify-content: space-between; }
+.mock-nav-hamburger span { display: block; height: 2px; width: 100%; background: white; border-radius: 2px; }
+
+.mock-news-serif { font-family: "Georgia", serif; font-weight: bold; font-size: 1.25rem; }
+.mock-news-sans { font-family: "Inter", sans-serif; font-weight: 300; font-size: 1.25rem; letter-spacing: -0.01em; }
+
+.mock-btn-wide { width: 100%; padding: 1rem; background: var(--accent-blue); border-radius: 8px; text-align: center; font-weight: 600; margin-top: 2rem; }
+.mock-fab { position: absolute; bottom: 1rem; right: 1rem; width: 56px; height: 56px; border-radius: 28px; background: var(--accent-blue); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 16px rgba(0,0,0,0.4); }
+
+.mock-stars { display: flex; gap: 4px; font-size: 1.5rem; color: #fbbf24; margin-top: 1rem; }
+.mock-slider { width: 100%; -webkit-appearance: none; background: rgba(255,255,255,0.1); height: 6px; border-radius: 3px; margin-top: 2rem; }
+.mock-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--accent-blue); cursor: pointer; }
 
 /* --- Mockup: Dashboard --- */
 .mock-header {
