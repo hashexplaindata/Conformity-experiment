@@ -27,19 +27,19 @@ def generate_participant(condition, base_time):
 
     for trial_num, pair_idx in enumerate(trials, 1):
         pair_id = PAIR_IDS[pair_idx - 1]
-        ai_pref = AI_PREFERRED[pair_id]
+        target_pos = AI_PREFERRED[pair_id]
 
         # Effect: AI condition → higher probability of picking AI-preferred option
-        if condition == 'ai':
+        if condition == 'AI_Labeled':
             p_ai = random.gauss(0.72, 0.05)
         else:
             p_ai = random.gauss(0.48, 0.05)
 
         p_ai = max(0.1, min(0.95, p_ai))
-        choice = ai_pref if random.random() < p_ai else ('B' if ai_pref == 'A' else 'A')
+        user_choice = target_pos if random.random() < p_ai else ('B' if target_pos == 'A' else 'A')
 
         # Confidence: slightly higher in AI condition
-        if condition == 'ai':
+        if condition == 'AI_Labeled':
             confidence = max(1, min(5, round(random.gauss(3.8, 0.9))))
         else:
             confidence = max(1, min(5, round(random.gauss(3.2, 0.9))))
@@ -54,8 +54,9 @@ def generate_participant(condition, base_time):
             'condition': condition,
             'trial_num': trial_num,
             'pair_id': pair_id,
-            'choice': choice,
-            'chosen_image': f'{pair_id}_{choice}.png',
+            'user_choice': user_choice,
+            'target_pos': target_pos,
+            'chose_target': 1 if user_choice == target_pos else 0,
             'confidence_1_5': confidence,
             'rt_ms': rt_ms,
             'timestamp': timestamp.strftime('%Y-%m-%dT%H:%M:%SZ'),
@@ -75,12 +76,12 @@ def main():
     all_rows = []
 
     for i in range(args.n):
-        condition = 'control' if i < args.n // 2 else 'ai'
+        condition = 'Control' if i < args.n // 2 else 'AI_Labeled'
         participant_base = base_time + timedelta(minutes=i * 5)
         all_rows.extend(generate_participant(condition, participant_base))
 
-    headers = ['participant_id', 'condition', 'trial_num', 'pair_id', 'choice',
-               'chosen_image', 'confidence_1_5', 'rt_ms', 'timestamp']
+    headers = ['participant_id', 'condition', 'trial_num', 'pair_id', 'user_choice',
+               'target_pos', 'chose_target', 'confidence_1_5', 'rt_ms', 'timestamp']
 
     with open(args.output, 'w', newline='') as f:
         writer = csv.DictWriter(f, fieldnames=headers)

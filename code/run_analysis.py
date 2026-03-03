@@ -28,15 +28,15 @@ matplotlib.use('Agg')  # Non-interactive backend for script use
 def load_and_validate(filepath):
     """Load CSV and validate schema."""
     required_cols = [
-        'Participant_ID', 'Condition', 'Trial_Number',
-        'Target_Option_Position', 'User_Choice', 'Reaction_Time_ms'
+        'participant_id', 'condition', 'trial_num',
+        'target_pos', 'user_choice', 'rt_ms'
     ]
     df = pd.read_csv(filepath)
     missing = [c for c in required_cols if c not in df.columns]
     if missing:
         print(f"[ERROR] Missing columns: {missing}")
         sys.exit(1)
-    print(f"[OK] Loaded {len(df)} rows, {df['Participant_ID'].nunique()} participants")
+    print(f"[OK] Loaded {len(df)} rows, {df['participant_id'].nunique()} participants")
     return df
 
 
@@ -49,18 +49,18 @@ def clean_data(df):
     n_before = len(df)
 
     # Drop sub-250ms (accidental clicks)
-    df = df[df['Reaction_Time_ms'] >= 250].copy()
+    df = df[df['rt_ms'] >= 250].copy()
     n_fast = n_before - len(df)
 
     # Drop > 3 SD above mean (distraction)
-    mean_rt = df['Reaction_Time_ms'].mean()
-    std_rt = df['Reaction_Time_ms'].std()
+    mean_rt = df['rt_ms'].mean()
+    std_rt = df['rt_ms'].std()
     upper_bound = mean_rt + 3 * std_rt
-    df = df[df['Reaction_Time_ms'] <= upper_bound].copy()
+    df = df[df['rt_ms'] <= upper_bound].copy()
     n_slow = n_before - n_fast - len(df)
 
     print(f"[CLEAN] Removed {n_fast} fast clicks (<250ms), {n_slow} slow outliers (>3SD)")
-    print(f"[CLEAN] Remaining: {len(df)} rows ({df['Participant_ID'].nunique()} participants)")
+    print(f"[CLEAN] Remaining: {len(df)} rows ({df['participant_id'].nunique()} participants)")
     return df
 
 
@@ -77,12 +77,12 @@ def test_conformity(df):
     print("HYPOTHESIS 1: CONFORMITY EFFECT (Chi-Square)")
     print("=" * 60)
 
-    # Compute whether user chose the target option
-    if 'Chose_Target' not in df.columns:
-        df['Chose_Target'] = (df['User_Choice'] == df['Target_Option_Position']).astype(int)
+    # Compute whether user chose the target option if not already present
+    if 'chose_target' not in df.columns:
+        df['chose_target'] = (df['user_choice'] == df['target_pos']).astype(int)
 
-    # Build contingency table: Condition x Chose_Target
-    ct = pd.crosstab(df['Condition'], df['Chose_Target'], margins=False)
+    # Build contingency table: condition x chose_target
+    ct = pd.crosstab(df['condition'], df['chose_target'], margins=False)
     print("\nContingency Table:")
     print(ct.to_string())
 
@@ -100,7 +100,7 @@ def test_conformity(df):
     print(f"Cramer's V = {cramers_v:.4f}")
 
     # Choice rates per condition
-    rates = df.groupby('Condition')['Chose_Target'].mean()
+    rates = df.groupby('condition')['chose_target'].mean()
     for cond, rate in rates.items():
         print(f"  {cond}: {rate:.1%} chose target option")
 
@@ -125,8 +125,8 @@ def test_cognitive_offloading(df):
     print("HYPOTHESIS 2: COGNITIVE OFFLOADING (T-Test)")
     print("=" * 60)
 
-    rt_control = df.loc[df['Condition'] == 'Control', 'Reaction_Time_ms']
-    rt_ai = df.loc[df['Condition'] == 'AI_Labeled', 'Reaction_Time_ms']
+    rt_control = df.loc[df['condition'] == 'Control', 'rt_ms']
+    rt_ai = df.loc[df['condition'] == 'AI_Labeled', 'rt_ms']
 
     if len(rt_control) == 0 or len(rt_ai) == 0:
         print("[WARN] One or both conditions have no data. Skipping T-Test.")
@@ -178,9 +178,9 @@ def plot_split_violin(df, output_path):
     palette = {'Control': '#64748B', 'AI_Labeled': '#2997FF'}
     sns.violinplot(
         data=df,
-        x='Condition',
-        y='Reaction_Time_ms',
-        hue='Condition',
+        x='condition',
+        y='rt_ms',
+        hue='condition',
         split=False,
         inner='quart',    # Show quartile lines
         palette=palette,
@@ -193,9 +193,9 @@ def plot_split_violin(df, output_path):
     # Overlay individual data points (jittered strip plot)
     sns.stripplot(
         data=df,
-        x='Condition',
-        y='Reaction_Time_ms',
-        hue='Condition',
+        x='condition',
+        y='rt_ms',
+        hue='condition',
         palette=palette,
         size=3,
         alpha=0.25,

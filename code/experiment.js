@@ -9,7 +9,7 @@
 // ---- Configuration & Condition ----
 const params = new URLSearchParams(window.location.search);
 const CFG = Object.freeze({
-    NUM_TRIALS: 6,
+    NUM_TRIALS: 8,
     CONDITION: params.get('condition') === 'ai' ? 'AI_Labeled' : 'Control',
     // --- FIREBASE CONFIGURATION (Loaded from firebase-config.js) ---
     FIREBASE: typeof FIREBASE_CONFIG !== 'undefined' ? FIREBASE_CONFIG : {
@@ -154,6 +154,50 @@ const TRIALS = [
                 <div style="display:flex;justify-content:space-between;font-size:0.6rem;margin-top:0.5rem;"><span>1</span><span>10</span></div>
             </div>`,
         targetPos: Math.random() > 0.5 ? 'A' : 'B'
+    },
+    {
+        id: 'T7_Placeholder',
+        domain: 'Navigation Style',
+        renderA: () => `
+            <div class="mockup">
+                <div class="mock-header">Settings</div>
+                <div style="padding:1rem;">
+                    <div style="margin-bottom:0.5rem;">Profile</div>
+                    <div style="margin-bottom:0.5rem;">Privacy</div>
+                    <div style="margin-bottom:0.5rem;">Notifications</div>
+                </div>
+            </div>`,
+        renderB: () => `
+            <div class="mockup">
+                <div class="mock-header">Settings</div>
+                <div style="display:flex;flex-wrap:wrap;padding:0.5rem;">
+                    <div class="mock-card-small">👤</div>
+                    <div class="mock-card-small">🔒</div>
+                    <div class="mock-card-small">🔔</div>
+                </div>
+            </div>`,
+        targetPos: Math.random() > 0.5 ? 'A' : 'B'
+    },
+    {
+        id: 'T8_Placeholder',
+        domain: 'Content Layout',
+        renderA: () => `
+            <div class="mockup">
+                <div class="mock-header">Articles</div>
+                <div style="padding:1rem;">
+                    <div style="height:40px;background:#333;margin-bottom:1rem;"></div>
+                    <div style="height:40px;background:#333;margin-bottom:1rem;"></div>
+                </div>
+            </div>`,
+        renderB: () => `
+            <div class="mockup">
+                <div class="mock-header">Articles</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;padding:0.5rem;">
+                    <div style="height:60px;background:#333;"></div>
+                    <div style="height:60px;background:#333;"></div>
+                </div>
+            </div>`,
+        targetPos: Math.random() > 0.5 ? 'A' : 'B'
     }
 ];
 
@@ -234,14 +278,14 @@ function handleChoice(selectedIdx, leftIsA) {
 
     STATE.results.push({
         participant_id: STATE.pid,
-        experimental_condition: STATE.condition === 'AI_Labeled' ? 1 : 0,
+        condition: STATE.condition,
         ai_familiarity: STATE.baselineFamiliarity,
-        trial_sequence: STATE.currentTrial + 1,
+        trial_num: STATE.currentTrial + 1,
         ui_domain: trial.domain,
         trial_id: trial.id,
-        reaction_time_ms: rt.toFixed(2),
-        user_selection: selection,
-        ai_badge_position: trial.targetPos,
+        rt_ms: parseFloat(rt.toFixed(2)),
+        user_choice: selection,
+        target_pos: trial.targetPos,
         chose_target: choseTarget ? 1 : 0
     });
 

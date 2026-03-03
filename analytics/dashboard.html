@@ -171,8 +171,8 @@
 
     <script>
         const AI_PREFERRED = {
-            pair01: 'A', pair02: 'B', pair03: 'A', pair04: 'B',
-            pair05: 'A', pair06: 'B', pair07: 'A', pair08: 'B',
+            'T1_Schedule': 'A', 'T2_Attendance': 'B', 'T3_Library': 'A', 'T4_News': 'B',
+            'T5_Enrollment': 'A', 'T6_Professor': 'B', 'T7_Placeholder': 'A', 'T8_Placeholder': 'B',
         };
 
         Chart.defaults.color = '#9ca3af';
@@ -208,26 +208,26 @@
 
         function processCSV(text) {
             const data = parseCSV(text);
-            const control = data.filter(r => r.condition === 'control');
-            const ai = data.filter(r => r.condition === 'ai');
+            const control = data.filter(r => r.condition === 'Control');
+            const ai = data.filter(r => r.condition === 'AI_Labeled');
 
             const ctrlPids = new Set(control.map(r => r.participant_id)).size;
             const aiPids = new Set(ai.map(r => r.participant_id)).size;
 
-            const ctrlAiChosen = control.filter(r => r.choice === AI_PREFERRED[r.pair_id]).length;
-            const aiAiChosen = ai.filter(r => r.choice === AI_PREFERRED[r.pair_id]).length;
-            const pCtrl = ctrlAiChosen / control.length;
-            const pAi = aiAiChosen / ai.length;
+            const ctrlAiChosen = control.filter(r => r.user_choice === AI_PREFERRED[r.trial_id]).length;
+            const aiAiChosen = ai.filter(r => r.user_choice === AI_PREFERRED[r.trial_id]).length;
+            const pCtrl = control.length > 0 ? ctrlAiChosen / control.length : 0;
+            const pAi = ai.length > 0 ? aiAiChosen / ai.length : 0;
 
-            const ctrlConf = control.map(r => +r.confidence_1_5);
-            const aiConf = ai.map(r => +r.confidence_1_5);
-            const meanCtrlConf = ctrlConf.reduce((a, b) => a + b, 0) / ctrlConf.length;
-            const meanAiConf = aiConf.reduce((a, b) => a + b, 0) / aiConf.length;
+            const ctrlConf = control.map(r => +r.confidence_1_5).filter(v => !isNaN(v));
+            const aiConf = ai.map(r => +r.confidence_1_5).filter(v => !isNaN(v));
+            const meanCtrlConf = ctrlConf.length > 0 ? ctrlConf.reduce((a, b) => a + b, 0) / ctrlConf.length : 0;
+            const meanAiConf = aiConf.length > 0 ? aiConf.reduce((a, b) => a + b, 0) / aiConf.length : 0;
 
-            const ctrlRT = control.map(r => +r.rt_ms);
-            const aiRT = ai.map(r => +r.rt_ms);
-            const meanCtrlRT = ctrlRT.reduce((a, b) => a + b, 0) / ctrlRT.length;
-            const meanAiRT = aiRT.reduce((a, b) => a + b, 0) / aiRT.length;
+            const ctrlRT = control.map(r => +r.rt_ms).filter(v => !isNaN(v));
+            const aiRT = ai.map(r => +r.rt_ms).filter(v => !isNaN(v));
+            const meanCtrlRT = ctrlRT.length > 0 ? ctrlRT.reduce((a, b) => a + b, 0) / ctrlRT.length : 0;
+            const meanAiRT = aiRT.length > 0 ? aiRT.reduce((a, b) => a + b, 0) / aiRT.length : 0;
 
             // Stats cards
             document.getElementById('stats-row').innerHTML = [
