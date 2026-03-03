@@ -1,379 +1,307 @@
-// ============================================================
-// BEHAVIORAL DIAGNOSTIC TOOL — EXPERIMENT ENGINE
-// Zero-dependency, edge-computed telemetry.
-// Uses performance.now() for sub-millisecond reaction times.
-// ============================================================
+/**
+ * BEHAVIORAL DIAGNOSTIC TOOL — CORE ENGINE
+ * Principal Behavioral UX Architect | Elite Frontend Engineer
+ * Telemetry: Edge-Computed, Millisecond-Accurate (performance.now)
+ */
 
 'use strict';
 
-// ---- Configuration & Condition ----
+// --- Configuration & Condition Extraction ---
 const params = new URLSearchParams(window.location.search);
 const CFG = Object.freeze({
-    NUM_TRIALS: 8,
-    CONDITION: params.get('condition') === 'ai' ? 'AI_Labeled' : 'Control',
-    // --- FIREBASE CONFIGURATION (Loaded from firebase-config.js) ---
-    FIREBASE: typeof FIREBASE_CONFIG !== 'undefined' ? FIREBASE_CONFIG : {
-        apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-        projectId: "YOUR_PROJECT_ID",
-        storageBucket: "YOUR_PROJECT_ID.appspot.com",
-        messagingSenderId: "YOUR_SENDER_ID",
-        appId: "YOUR_APP_ID"
-    }
+    NUM_TRIALS: 6,
+    CONDITION: params.get('condition') === 'ai' ? 'ai_labeled' : 'control',
+    COLLECTION: 'conformity_telemetry'
 });
 
-// Initialize Firebase (if config is provided)
-let db = null;
-if (CFG.FIREBASE.apiKey !== "YOUR_API_KEY") {
-    firebase.initializeApp(CFG.FIREBASE);
-    db = firebase.firestore();
-}
-
-// ---- Participant & State ----
-function generatePID() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
-        const r = Math.random() * 16 | 0;
-        return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-    });
-}
-
+// --- State Machine ---
 const STATE = {
-    pid: generatePID(),
+    pid: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
     condition: CFG.CONDITION,
-    baselineFamiliarity: 0,
+    covariate: 0,
     currentTrial: 0,
-    results: [],
-    startTime: 0,
-    trialStartTime: 0
+    results: [], // Tidy Data Long Format
+    trialStartTime: 0,
+    isTrialActive: false,
+    justification: ""
 };
 
-// ============================================================
-// TRIAL DEFINITIONS (6 Specified Pairs)
-// ============================================================
+// --- Trial Definitions (Pixel-Perfect Components) ---
 const TRIALS = [
     {
-        id: 'T1_Schedule',
-        domain: 'Information Density',
-        renderA: () => `
-            <div class="mockup">
-                <div class="mock-header">Weekly Schedule</div>
-                <div class="mock-schedule-list">
-                    <div class="mock-schedule-item">CS101: 9:00 AM - 10:30 AM</div>
-                    <div class="mock-schedule-item">MATH202: 11:00 AM - 12:30 PM</div>
-                    <div class="mock-schedule-item">PHYS301: 2:00 PM - 3:30 PM</div>
-                </div>
-            </div>`,
-        renderB: () => `
-            <div class="mockup">
-                <div class="mock-header">Weekly Schedule</div>
-                <div class="mock-schedule-grid">
-                    <div class="mock-schedule-card">CS101<br>9:00</div>
-                    <div class="mock-schedule-card">MATH202<br>11:00</div>
-                    <div class="mock-schedule-card">PHYS301<br>2:00</div>
-                </div>
-            </div>`,
-        targetPos: Math.random() > 0.5 ? 'A' : 'B'
-    },
-    {
-        id: 'T2_Attendance',
         domain: 'Data Visualization',
         renderA: () => `
-            <div class="mockup">
-                <div class="mock-header">Attendance</div>
-                <div class="mock-chart-donut">85%</div>
-                <div style="text-align:center;margin-top:0.5rem;font-size:0.8rem;">Present</div>
-            </div>`,
+            <div class="mock-header"></div>
+            <div class="t1-kpi-row">
+                <div class="t1-kpi"></div>
+                <div class="t1-kpi"></div>
+            </div>
+            <div class="t1-chart"></div>`,
         renderB: () => `
-            <div class="mockup">
-                <div class="mock-header">Attendance</div>
-                <div class="mock-progress-bar"><div class="mock-progress-fill"></div></div>
-                <div style="text-align:center;margin-top:0.5rem;font-size:0.8rem;">85% Present</div>
+            <div class="mock-header"></div>
+            <div class="t1-chart" style="margin-bottom:1rem; height:120px;"></div>
+            <div class="t1-kpi-row">
+                <div class="t1-kpi" style="height:40px;"></div>
+                <div class="t1-kpi" style="height:40px;"></div>
             </div>`,
-        targetPos: Math.random() > 0.5 ? 'A' : 'B'
+        target: 'B' // Layout B is hypothesized as "better" or just the target for label
     },
     {
-        id: 'T3_Library',
         domain: 'Navigation Hierarchy',
         renderA: () => `
-            <div class="mockup" style="padding-bottom:60px;">
-                <div class="mock-header">Library Portal</div>
-                <div class="mock-nav-bottom">
-                    <span>🏠</span><span>🔍</span><span>🔖</span>
-                </div>
+            <div class="mock-header" style="width:40%"></div>
+            <div class="mock-block" style="height:150px;"></div>
+            <div style="display:flex; gap:10px;">
+                <div class="mock-block" style="flex:1; height:40px;"></div>
+                <div class="mock-block" style="flex:1; height:40px;"></div>
             </div>`,
         renderB: () => `
-            <div class="mockup">
-                <div class="mock-nav-hamburger"><span></span><span></span><span></span></div>
-                <div class="mock-header" style="margin-left:3rem;">Library Portal</div>
-                <div style="margin-top:2rem;opacity:0.3;">Main Content Area...</div>
-            </div>`,
-        targetPos: Math.random() > 0.5 ? 'A' : 'B'
+            <div class="mock-header" style="width:40%"></div>
+            <div style="display:flex; gap:10px; margin-bottom:10px;">
+                <div class="mock-block" style="flex:1; height:40px;"></div>
+                <div class="mock-block" style="flex:1; height:40px;"></div>
+            </div>
+            <div class="mock-block" style="height:150px;"></div>`,
+        target: 'A'
     },
     {
-        id: 'T4_News',
-        domain: 'Typographical Dominance',
+        domain: 'Information Density',
         renderA: () => `
-            <div class="mockup">
-                <div class="mock-news-serif">Campus News: New Research Grant Announced</div>
-                <div style="margin-top:1rem;font-size:0.8rem;color:var(--text-secondary);">The university has received a $2M grant for AI research...</div>
-            </div>`,
+            <div class="mock-header"></div>
+            <div class="mock-block" style="height:20px; width:90%"></div>
+            <div class="mock-block" style="height:20px; width:80%"></div>
+            <div class="mock-block" style="height:20px; width:85%"></div>
+            <div class="mock-block" style="height:100px; margin-top:20px;"></div>`,
         renderB: () => `
-            <div class="mockup">
-                <div class="mock-news-sans">Campus News: New Research Grant Announced</div>
-                <div style="margin-top:1rem;font-size:0.8rem;color:var(--text-secondary);">The university has received a $2M grant for AI research...</div>
+            <div class="mock-header"></div>
+            <div class="mock-block" style="height:100px;"></div>
+            <div style="margin-top:20px;">
+                <div class="mock-block" style="height:20px; width:90%"></div>
+                <div class="mock-block" style="height:20px; width:80%"></div>
+                <div class="mock-block" style="height:20px; width:85%"></div>
             </div>`,
-        targetPos: Math.random() > 0.5 ? 'A' : 'B'
+        target: 'B'
     },
     {
-        id: 'T5_Enrollment',
         domain: 'Interaction Design',
         renderA: () => `
-            <div class="mockup">
-                <div class="mock-header">Course Registration</div>
-                <div class="mock-btn-wide">Enroll Now</div>
+            <div class="mock-header" style="width:30%"></div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; flex:1;">
+                <div class="mock-block"></div>
+                <div class="mock-block"></div>
+                <div class="mock-block"></div>
+                <div class="mock-block"></div>
             </div>`,
         renderB: () => `
-            <div class="mockup">
-                <div class="mock-header">Course Registration</div>
-                <div class="mock-fab">✨</div>
+            <div class="mock-header" style="width:30%"></div>
+            <div style="display:flex; flex-direction:column; gap:10px; flex:1;">
+                <div class="mock-block" style="height:45px;"></div>
+                <div class="mock-block" style="height:45px;"></div>
+                <div class="mock-block" style="height:45px;"></div>
+                <div class="mock-block" style="height:45px;"></div>
             </div>`,
-        targetPos: Math.random() > 0.5 ? 'A' : 'B'
+        target: 'A'
     },
     {
-        id: 'T6_Professor',
-        domain: 'Qualitative Feedback',
+        domain: 'Typographical Dominance',
         renderA: () => `
-            <div class="mockup">
-                <div class="mock-header">Rate Professor</div>
-                <div class="mock-stars">★★★★★</div>
-            </div>`,
+            <div class="mock-header" style="height:3rem; width:100%; background:rgba(255,255,255,0.1)"></div>
+            <div class="mock-block" style="height:200px; margin-top:1rem;"></div>`,
         renderB: () => `
-            <div class="mockup">
-                <div class="mock-header">Rate Professor</div>
-                <input type="range" class="mock-slider" value="8" min="1" max="10">
-                <div style="display:flex;justify-content:space-between;font-size:0.6rem;margin-top:0.5rem;"><span>1</span><span>10</span></div>
-            </div>`,
-        targetPos: Math.random() > 0.5 ? 'A' : 'B'
+            <div class="mock-block" style="height:200px;"></div>
+            <div class="mock-header" style="height:3rem; width:100%; background:rgba(255,255,255,0.1); margin-top:1rem;"></div>`,
+        target: 'B'
     },
     {
-        id: 'T7_Placeholder',
-        domain: 'Navigation Style',
+        domain: 'Visual Branding',
         renderA: () => `
-            <div class="mockup">
-                <div class="mock-header">Settings</div>
-                <div style="padding:1rem;">
-                    <div style="margin-bottom:0.5rem;">Profile</div>
-                    <div style="margin-bottom:0.5rem;">Privacy</div>
-                    <div style="margin-bottom:0.5rem;">Notifications</div>
-                </div>
-            </div>`,
+            <div class="t2-avatar"></div>
+            <div class="t2-line" style="width:50%"></div>
+            <div class="t2-line" style="width:30%"></div>
+            <div class="mock-block" style="height:120px; margin-top:1.5rem;"></div>`,
         renderB: () => `
-            <div class="mockup">
-                <div class="mock-header">Settings</div>
-                <div style="display:flex;flex-wrap:wrap;padding:0.5rem;">
-                    <div class="mock-card-small">👤</div>
-                    <div class="mock-card-small">🔒</div>
-                    <div class="mock-card-small">🔔</div>
+            <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem;">
+                <div class="t2-avatar" style="margin:0"></div>
+                <div style="flex:1">
+                    <div class="t2-line" style="width:80%"></div>
+                    <div class="t2-line" style="width:40%"></div>
                 </div>
-            </div>`,
-        targetPos: Math.random() > 0.5 ? 'A' : 'B'
-    },
-    {
-        id: 'T8_Placeholder',
-        domain: 'Content Layout',
-        renderA: () => `
-            <div class="mockup">
-                <div class="mock-header">Articles</div>
-                <div style="padding:1rem;">
-                    <div style="height:40px;background:#333;margin-bottom:1rem;"></div>
-                    <div style="height:40px;background:#333;margin-bottom:1rem;"></div>
-                </div>
-            </div>`,
-        renderB: () => `
-            <div class="mockup">
-                <div class="mock-header">Articles</div>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;padding:0.5rem;">
-                    <div style="height:60px;background:#333;"></div>
-                    <div style="height:60px;background:#333;"></div>
-                </div>
-            </div>`,
-        targetPos: Math.random() > 0.5 ? 'A' : 'B'
+            </div>
+            <div class="mock-block" style="height:120px;"></div>`,
+        target: 'A'
     }
 ];
 
-// ---- DOM Elements ----
-const EL = {
-    screenWelcome: document.getElementById('screen-welcome'),
-    screenTrial: document.getElementById('screen-trial'),
-    screenComplete: document.getElementById('screen-complete'),
+// --- DOM Elements ---
+const DOM = {
+    screens: document.querySelectorAll('.screen'),
+    btnConsent: document.getElementById('btn-consent'),
+    btnsFamiliarity: document.querySelectorAll('.btn-familiarity'),
     trialGrid: document.getElementById('trial-grid'),
     trialCounter: document.getElementById('trial-counter'),
     progressFill: document.getElementById('progress-fill'),
-    btnStart: document.getElementById('btn-start'),
-    baselineBtns: document.querySelectorAll('.btn-option'),
-    rationaleText: document.getElementById('rationale-text'),
-    btnSubmitData: document.getElementById('btn-submit-data'),
-    finalSuccess: document.getElementById('final-success'),
-    btnDownload: document.getElementById('btn-download')
+    textareaJustification: document.getElementById('semantic-justification'),
+    btnFinalize: document.getElementById('btn-finalize'),
+    syncStatus: document.getElementById('sync-status'),
+    finalActions: document.getElementById('final-actions'),
+    displayPid: document.getElementById('display-pid')
 };
 
-// ---- Initialization ----
+// --- Navigation Logic ---
+function showScreen(id) {
+    DOM.screens.forEach(s => {
+        s.classList.remove('active');
+        s.style.display = 'none';
+    });
+    const target = document.getElementById(`screen-${id}`);
+    target.style.display = 'flex';
+    setTimeout(() => target.classList.add('active'), 50);
+}
+
+// --- Experiment Logic ---
 function init() {
-    EL.baselineBtns.forEach(btn => {
+    // Navigation Lock
+    window.history.pushState(null, "", window.location.href);
+    window.onpopstate = () => window.history.pushState(null, "", window.location.href);
+
+    // Screen 1 Event
+    DOM.btnConsent.addEventListener('click', () => showScreen(2));
+
+    // Screen 2 Event
+    DOM.btnsFamiliarity.forEach(btn => {
         btn.addEventListener('click', () => {
-            EL.baselineBtns.forEach(b => b.classList.remove('selected'));
-            btn.classList.add('selected');
-            STATE.baselineFamiliarity = parseInt(btn.dataset.val);
-            EL.btnStart.disabled = false;
+            STATE.covariate = parseInt(btn.dataset.val);
+            showScreen('trial');
+            loadNextTrial();
         });
     });
 
-    EL.btnStart.addEventListener('click', startExperiment);
-    EL.btnSubmitData.addEventListener('click', submitFinalTelemetry);
-    EL.btnDownload.addEventListener('click', downloadCSV);
-
-    console.log(`Initialized in ${STATE.condition} condition. PID: ${STATE.pid}`);
-}
-
-function startExperiment() {
-    EL.screenWelcome.classList.remove('active');
-    EL.screenTrial.classList.add('active');
-    STATE.startTime = performance.now();
-    loadTrial();
-}
-
-function loadTrial() {
-    const trial = TRIALS[STATE.currentTrial];
-    EL.trialCounter.innerText = `TRIAL ${STATE.currentTrial + 1} OF ${CFG.NUM_TRIALS}`;
-    EL.progressFill.style.width = `${((STATE.currentTrial) / CFG.NUM_TRIALS) * 100}%`;
-
-    const leftIsA = Math.random() > 0.5;
-    const htmlA = trial.renderA();
-    const htmlB = trial.renderB();
-
-    EL.trialGrid.innerHTML = leftIsA ? htmlA + htmlB : htmlB + htmlA;
-
-    if (STATE.condition === 'AI_Labeled') {
-        const targetSide = (leftIsA && trial.targetPos === 'A') || (!leftIsA && trial.targetPos === 'B') ? 0 : 1;
-        const targetEl = EL.trialGrid.children[targetSide];
-        const badge = document.createElement('div');
-        badge.className = 'ai-badge';
-        badge.innerHTML = '<span>✨</span> AI Suggested';
-        targetEl.appendChild(badge);
-    }
-
-    STATE.trialStartTime = performance.now();
-
-    Array.from(EL.trialGrid.children).forEach((el, idx) => {
-        el.addEventListener('click', () => handleChoice(idx, leftIsA));
-    });
-}
-
-function handleChoice(selectedIdx, leftIsA) {
-    const rt = performance.now() - STATE.trialStartTime;
-    const trial = TRIALS[STATE.currentTrial];
-    
-    const selection = (selectedIdx === 0 && leftIsA) || (selectedIdx === 1 && !leftIsA) ? 'A' : 'B';
-    const choseTarget = selection === trial.targetPos;
-
-    STATE.results.push({
-        participant_id: STATE.pid,
-        condition: STATE.condition,
-        ai_familiarity: STATE.baselineFamiliarity,
-        trial_num: STATE.currentTrial + 1,
-        ui_domain: trial.domain,
-        trial_id: trial.id,
-        rt_ms: parseFloat(rt.toFixed(2)),
-        user_choice: selection,
-        target_pos: trial.targetPos,
-        chose_target: choseTarget ? 1 : 0
+    // Screen 9 Events
+    DOM.textareaJustification.addEventListener('input', (e) => {
+        DOM.btnFinalize.disabled = e.target.value.trim().length < 5;
     });
 
-    STATE.currentTrial++;
+    DOM.btnFinalize.addEventListener('click', () => {
+        STATE.justification = DOM.textareaJustification.value.trim();
+        showScreen(10);
+        executeBatchPayload();
+    });
 
-    if (STATE.currentTrial < CFG.NUM_TRIALS) {
-        loadTrial();
-    } else {
-        completeExperiment();
-    }
+    console.log(`Diagnostic Engine Initialized. PID: ${STATE.pid} | Condition: ${STATE.condition}`);
 }
 
-function completeExperiment() {
-    EL.screenTrial.classList.remove('active');
-    EL.screenComplete.classList.add('active');
-    
-    const totalTrials = STATE.results.length;
-    const conformityCount = STATE.results.filter(r => r.chose_target === 1).length;
-    const conformityScore = Math.round((conformityCount / totalTrials) * 100);
-    
-    document.getElementById('ring-val').innerText = `${conformityScore}%`;
-    document.getElementById('ring-fg').style.strokeDashoffset = 251.2 - (251.2 * conformityScore / 100);
-    
-    const avgSpeed = (STATE.results.reduce((acc, r) => acc + parseFloat(r.reaction_time_ms), 0) / totalTrials / 1000).toFixed(2);
-    document.getElementById('speed-value').innerText = avgSpeed;
-    
-    document.getElementById('result-condition').innerText = STATE.condition;
-    document.getElementById('result-pid').innerText = STATE.pid;
-}
-
-async function submitFinalTelemetry() {
-    const rationale = EL.rationaleText.value.trim();
-    if (!rationale) {
-        alert("Please provide a brief rationale before submitting.");
+function loadNextTrial() {
+    if (STATE.currentTrial >= CFG.NUM_TRIALS) {
+        showScreen(9);
         return;
     }
 
-    STATE.results.forEach(r => r.semantic_justification = rationale);
+    const trial = TRIALS[STATE.currentTrial];
+    DOM.trialCounter.innerText = `Diagnostic ${STATE.currentTrial + 1}/${CFG.NUM_TRIALS}`;
+    DOM.progressFill.style.width = `${(STATE.currentTrial / CFG.NUM_TRIALS) * 100}%`;
 
-    EL.btnSubmitData.disabled = true;
-    EL.btnSubmitData.innerText = "Synchronizing to Firebase...";
+    // Randomize L/R positioning to prevent motor habituation
+    const leftIsA = Math.random() > 0.5;
+    
+    // Build the Bento Choice Cards
+    DOM.trialGrid.innerHTML = '';
+    
+    const cardL = createChoiceCard(leftIsA ? 'A' : 'B', trial);
+    const cardR = createChoiceCard(leftIsA ? 'B' : 'A', trial);
+    
+    DOM.trialGrid.appendChild(cardL);
+    DOM.trialGrid.appendChild(cardR);
+
+    // Inject AI Badge for experimental condition
+    if (STATE.condition === 'ai_labeled') {
+        // The badge always appears on the 'target' layout to test conformity
+        const targetCard = leftIsA 
+            ? (trial.target === 'A' ? cardL : cardR)
+            : (trial.target === 'B' ? cardL : cardR);
+        
+        const badge = document.createElement('div');
+        badge.className = 'ai-recommendation-badge';
+        badge.innerHTML = '<span>✨</span> AI Recommended';
+        targetCard.appendChild(badge);
+    }
+
+    // Start millisecond-accurate timer
+    STATE.trialStartTime = performance.now();
+    STATE.isTrialActive = true;
+}
+
+function createChoiceCard(type, trial) {
+    const card = document.createElement('div');
+    card.className = 'bento-choice-card';
+    card.innerHTML = type === 'A' ? trial.renderA() : trial.renderB();
+    
+    card.addEventListener('pointerdown', () => {
+        if (!STATE.isTrialActive) return;
+        handleUserSelection(type, trial);
+    });
+    
+    return card;
+}
+
+function handleUserSelection(selection, trial) {
+    const rt = performance.now() - STATE.trialStartTime;
+    STATE.isTrialActive = false;
+
+    // Log Tidy Data Row
+    STATE.results.push({
+        participant_id: STATE.pid,
+        experimental_condition: STATE.condition,
+        ai_familiarity_covariate: STATE.covariate,
+        trial_sequence: STATE.currentTrial + 1,
+        ui_domain: trial.domain,
+        ai_badge_position: STATE.condition === 'ai_labeled' ? `Layout ${trial.target}` : 'none',
+        user_selection: `Layout ${selection}`,
+        chose_target_layout: selection === trial.target,
+        reaction_time_ms: parseFloat(rt.toFixed(2)),
+        semantic_justification: null, // Placeholder
+        timestamp: Date.now()
+    });
+
+    STATE.currentTrial++;
+    
+    // Debounce transition for visual feedback
+    setTimeout(loadNextTrial, 200);
+}
+
+// --- Firebase Integration (Batch Write) ---
+async function executeBatchPayload() {
+    // Append justification to all rows
+    STATE.results.forEach(row => row.semantic_justification = STATE.justification);
 
     try {
-        if (db) {
-            // Write each trial as a separate document in the 'telemetry' collection
+        // Check for Firebase (initialized in index.html via firebase-config.js)
+        if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
+            const db = firebase.firestore();
             const batch = db.batch();
-            STATE.results.forEach(r => {
-                const docRef = db.collection('telemetry').doc();
-                batch.set(docRef, {
-                    ...r,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                });
+
+            STATE.results.forEach(data => {
+                const docRef = db.collection(CFG.COLLECTION).doc();
+                batch.set(docRef, data);
             });
+
             await batch.commit();
-            console.log("Payload synchronized to Firebase Firestore.");
+            onSyncSuccess();
         } else {
-            console.log("Firebase not initialized. Payload (Tidy Data Long Format):", STATE.results);
-            await new Promise(resolve => setTimeout(resolve, 1500));
+            console.warn("Firebase not detected. Payload logged to console:", STATE.results);
+            setTimeout(onSyncSuccess, 1500); // Simulate sync delay
         }
-        
-        document.getElementById('rationale-container').style.display = 'none';
-        EL.finalSuccess.style.display = 'block';
-    } catch (err) {
-        console.error("Firebase sync failed:", err);
-        alert("Cloud sync failed. Error: " + err.message + "\nPlease download the CSV backup.");
-        EL.btnSubmitData.disabled = false;
-        EL.btnSubmitData.innerText = "Retry Submission";
+    } catch (error) {
+        console.error("Critical Sync Failure:", error);
+        DOM.syncStatus.innerHTML = `<span style="color:#ff453a">⚠️ Sync Failed. Error: ${error.code || 'Network'}</span>`;
+        // Potential fallback: Save to localStorage for later recovery
     }
 }
 
-function downloadCSV() {
-    const headers = Object.keys(STATE.results[0]);
-    const csvRows = [headers.join(',')];
-    
-    for (const row of STATE.results) {
-        const values = headers.map(header => {
-            const val = row[header];
-            return typeof val === 'string' && val.includes(',') ? `"${val}"` : val;
-        });
-        csvRows.push(values.join(','));
-    }
-    
-    const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `telemetry_${STATE.pid}.csv`;
-    a.click();
+function onSyncSuccess() {
+    DOM.syncStatus.style.display = 'none';
+    DOM.finalActions.style.display = 'block';
+    DOM.displayPid.innerText = STATE.pid;
 }
 
+// Initialize on Load
 window.addEventListener('DOMContentLoaded', init);

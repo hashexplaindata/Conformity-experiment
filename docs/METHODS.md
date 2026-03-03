@@ -57,14 +57,19 @@ Each pair shared identical layout and functionality, differing only in a single 
 - **Between-subjects IV:** Condition (control vs. AI label)
 - **Metadata:** Participant UUID, trial order, pair ID, timestamp
 
-## Planned Analyses
+## Metadata
 
-1. **Primary analysis:** Two-proportion z-test comparing the proportion of AI-preferred option selections between conditions.
-2. **Effect size:** Cohen's h for proportion differences.
-3. **Confidence analysis:** Independent samples t-test on confidence ratings by condition, with Cohen's d.
-4. **Reaction time analysis:** Independent samples t-test on log-transformed reaction times, with Cohen's d.
-5. **Significance threshold:** alpha = .05 (two-tailed).
-6. **Sensitivity analysis:** With N=100 per condition (800 total trials), the study has >80% power to detect a medium effect (h = 0.24) at alpha = .05.
+- Participant UUID
+- Condition (control vs. AI label)
+- AI familiarity covariate
+- Trial sequence
+- UI domain
+- AI badge position
+- User selection
+- Choice (target layout)
+- Reaction time (ms)
+- Semantic justification
+- Timestamp
 
 ## Ethics
 

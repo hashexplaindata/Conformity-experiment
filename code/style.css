@@ -1,717 +1,251 @@
 /* ============================================================
-   BEHAVIORAL DIAGNOSTIC TOOL — STYLE SHEET
-   Zero-dependency, strict geometric layouts.
-   All measurements in rem/px for pixel-perfect mirroring.
+   BEHAVIORAL DIAGNOSTIC TOOL — CORE STYLES
+   Principal Behavioral UX Architect | Elite Frontend Engineer
+   Architecture: Bento Grid Deception
    ============================================================ */
 
-/* --- Design Tokens --- */
 :root {
     --bg-void: #000000;
-    --bg-surface: rgba(22, 22, 24, 0.7);
-    --bg-card: rgba(30, 30, 32, 0.6);
-    --bg-option: rgba(38, 38, 42, 0.5);
-    --text-primary: #f5f5f7;
+    --bg-card: #111111;
+    --bg-surface: #1a1a1a;
+    --text-primary: #ffffff;
     --text-secondary: #a1a1a6;
-    --text-muted: #6e6e73;
     --accent-blue: #2997ff;
-    --accent-glow: rgba(41, 151, 255, 0.25);
-    --border: rgba(255, 255, 255, 0.08);
-    --border-hover: rgba(255, 255, 255, 0.16);
-    --border-selected: #2997ff;
-    --radius: 14px;
-    --radius-sm: 10px;
-    --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.5);
-    --spring: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    --accent-purple: #a855f7;
+    --border: rgba(255, 255, 255, 0.1);
+    --radius: 20px;
+    --radius-sm: 12px;
+    --shadow-sm: 0 8px 32px rgba(0, 0, 0, 0.4);
+    --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 /* --- Reset & Base --- */
-*,
-*::before,
-*::after {
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
-    background: var(--bg-void);
+    font-family: 'Inter', -apple-system, sans-serif;
+    background-color: var(--bg-void);
     color: var(--text-primary);
-    min-height: 100vh;
-    line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden;
+    overflow: hidden; /* Prevent scrolling during experiment */
+    height: 100vh;
+    width: 100vw;
 }
 
-/* --- Screen Management --- */
+/* --- Screen Transitions --- */
 .screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     display: none;
-    min-height: 100vh;
-    padding: 2.5rem 1.5rem;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
+    padding: 1.5rem;
+    overflow-y: auto;
+    opacity: 0;
+    transition: opacity 0.4s ease;
 }
 
 .screen.active {
     display: flex;
-    animation: screenIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
 }
 
-@keyframes screenIn {
-    from {
-        opacity: 0;
-        transform: scale(0.97) translateY(12px);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-    }
+/* --- Bento Architecture --- */
+.bento-container {
+    width: 100%;
+    max-width: 600px;
 }
 
-/* --- Card Container --- */
-.card {
-    background: var(--bg-surface);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
+.bento-card {
+    background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 3rem;
-    max-width: 640px;
-    width: 100%;
-    box-shadow: var(--shadow-card);
+    padding: 2.5rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.bento-card.welcome-hero {
     text-align: center;
 }
 
-.card h1 {
-    font-size: 2rem;
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    font-size: 0.7rem;
     font-weight: 700;
-    letter-spacing: -0.025em;
-    margin-bottom: 0.5rem;
-}
-
-.card .subtitle {
     color: var(--text-secondary);
-    font-size: 1.05rem;
-    margin-bottom: 2rem;
-    font-weight: 400;
+    margin-bottom: 1.5rem;
 }
 
-.card .meta {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    margin-top: 0.5rem;
-}
+h1 { font-size: 2.5rem; font-weight: 700; letter-spacing: -0.04em; margin-bottom: 1rem; }
+h2 { font-size: 1.75rem; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 1rem; }
+.subtitle { font-size: 1.1rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 2rem; }
+.instruction { color: var(--text-secondary); margin-bottom: 2rem; }
 
-/* --- Button --- */
-.btn {
+/* --- Buttons --- */
+.btn-primary {
     background: var(--accent-blue);
     color: white;
     border: none;
-    padding: 1.25rem 2.5rem;
-    font-size: 1.1rem;
-    font-weight: 600;
     border-radius: var(--radius-sm);
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: var(--spring);
+    transition: var(--transition);
     width: 100%;
-    margin-top: 1rem;
-    box-shadow: 0 8px 24px rgba(41, 151, 255, 0.25);
 }
 
-.btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 32px rgba(41, 151, 255, 0.4);
-    background: #4dabff;
-}
+.btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(41, 151, 255, 0.3); }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
 
-.btn:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-    filter: grayscale(1);
-}
-
-.btn-option {
-    background: rgba(255,255,255,0.05);
+.btn-familiarity {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    width: 100%;
+    background: rgba(255,255,255,0.03);
     border: 1px solid var(--border);
-    color: var(--text-secondary);
-    padding: 0.75rem;
     border-radius: var(--radius-sm);
+    padding: 1rem;
+    margin-bottom: 0.75rem;
     cursor: pointer;
-    font-size: 0.85rem;
-    transition: var(--spring);
-}
-
-.btn-option:hover {
-    background: rgba(255,255,255,0.1);
-    border-color: var(--border-hover);
-}
-
-.btn-option.selected {
-    background: var(--accent-blue);
+    transition: var(--transition);
     color: white;
-    border-color: var(--accent-blue);
-    font-weight: 600;
 }
 
-/* --- Progress Bar --- */
-.progress-bar-track {
+.btn-familiarity:hover { background: rgba(255,255,255,0.08); border-color: var(--text-secondary); }
+.btn-familiarity.active { background: var(--accent-blue); border-color: var(--accent-blue); }
+.btn-familiarity .val { font-weight: 700; font-size: 1.2rem; }
+.btn-familiarity .label { font-size: 0.9rem; font-weight: 500; }
+
+/* --- Trial Grid & Bento Deception --- */
+.trial-header {
     width: 100%;
-    max-width: 320px;
+    max-width: 900px;
+    margin-bottom: 2rem;
+}
+
+.progress-track {
+    width: 100%;
     height: 4px;
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255,255,255,0.1);
     border-radius: 2px;
-    overflow: hidden;
-    margin: 0 auto 0.75rem;
-}
-
-.progress-bar-fill {
-    height: 100%;
-    background: var(--text-primary);
-    border-radius: 2px;
-    transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    width: 0%;
-}
-
-.trial-counter {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 2rem;
-}
-
-/* --- Trial Grid — STRICT GEOMETRIC MIRROR --- */
-.trial-prompt {
-    font-size: 1.4rem;
-    font-weight: 600;
-    margin-bottom: 0.25rem;
-}
-
-.trial-hint {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    margin-bottom: 2rem;
-}
-
-.trial-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-    padding: 1.5rem 0;
-}
-
-@media (min-width: 768px) {
-    .trial-grid {
-        grid-template-columns: 1fr 1fr;
-    }
-}
-
-/* --- Option Wrapper (Relative parent for absolute badge) --- */
-.option-wrapper {
-    position: relative;
-    /* CRITICAL: anchor for absolute badge */
-    background: var(--bg-option);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1.75rem;
-    cursor: pointer;
-    transition: var(--spring);
-    /* Fixed dimensions ensure geometric mirror */
-    min-height: 320px;
-    display: flex;
-    flex-direction: column;
-}
-
-.option-wrapper:hover {
-    border-color: var(--border-hover);
-    transform: scale(1.02);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
-}
-
-.option-wrapper.selected {
-    border-color: var(--border-selected);
-    transform: scale(1.03);
-    box-shadow: 0 0 0 1px var(--border-selected), 0 12px 40px rgba(0, 0, 0, 0.6);
-}
-
-/* --- AI Recommended Badge (ABSOLUTE POSITION — NO LAYOUT SHIFT) --- */
-.ai-badge {
-    position: absolute;
-    top: 0.75rem;
-    right: 0.75rem;
-    padding: 0.3rem 0.6rem;
-    background: linear-gradient(135deg, #a855f7 0%, #3b82f6 100%);
-    color: white;
-    border-radius: 9999px;
-    font-size: 0.65rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.4);
-    pointer-events: none;
-    z-index: 10;
-}
-
-/* --- Option Label --- */
-.option-label {
-    font-size: 0.72rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--text-muted);
     margin-bottom: 1rem;
-    text-align: center;
 }
 
-/* ============================================================
-   MOCKUP COMPONENT LIBRARY (Geometric Mirrors)
-   All mockups use identical box models.
-   Only internal content/color differs between A and B.
-   ============================================================ */
-
-/* --- AI Badge --- */
-.ai-badge {
-    position: absolute;
-    top: 0.75rem;
-    right: 0.75rem;
-    padding: 0.3rem 0.6rem;
-    background: linear-gradient(135deg, #a855f7 0%, #3b82f6 100%);
-    color: white;
-    border-radius: 9999px;
-    font-size: 0.65rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.4);
-    pointer-events: none;
-    z-index: 10;
+.progress-fill {
+    height: 100%;
+    background: var(--accent-blue);
+    width: 0%;
+    transition: width 0.4s ease;
 }
 
-/* --- Layouts & Trials --- */
-.trial-grid {
+.trial-counter { font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.1em; }
+
+.bento-grid-deception {
     display: grid;
     grid-template-columns: 1fr;
     gap: 1.5rem;
-    padding: 1.5rem 0;
+    width: 100%;
+    max-width: 900px;
 }
 
 @media (min-width: 768px) {
-    .trial-grid {
-        grid-template-columns: 1fr 1fr;
-    }
+    .bento-grid-deception { grid-template-columns: 1fr 1fr; }
 }
 
-.mockup {
+/* --- Pixel-Perfect Geometric Mirroring --- */
+.bento-choice-card {
+    position: relative; /* CRITICAL for absolute badge */
     background: var(--bg-card);
     border: 2px solid var(--border);
     border-radius: var(--radius);
     padding: 1.5rem;
-    position: relative;
+    min-height: 380px;
     cursor: pointer;
-    transition: var(--spring);
-    text-align: left;
-    min-height: 200px;
-    width: 100%;
-}
-
-.mockup:hover {
-    border-color: var(--border-hover);
-    transform: translateY(-4px);
-    background: var(--bg-option);
-}
-
-.mockup.selected {
-    border-color: var(--border-selected);
-    box-shadow: 0 0 24px var(--accent-glow);
-}
-
-/* --- Specific Trials --- */
-.mock-schedule-list { display: flex; flex-direction: column; gap: 0.5rem; }
-.mock-schedule-item { background: rgba(255,255,255,0.05); padding: 0.5rem; border-radius: 4px; font-size: 0.75rem; }
-
-.mock-schedule-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
-.mock-schedule-card { background: rgba(255,255,255,0.05); padding: 0.5rem; border-radius: 8px; font-size: 0.7rem; text-align: center; }
-
-.mock-chart-donut { width: 80px; height: 80px; border-radius: 50%; border: 8px solid var(--accent-blue); display: flex; align-items: center; justify-content: center; margin: 0 auto; font-weight: bold; }
-.mock-progress-bar { width: 100%; height: 12px; background: rgba(255,255,255,0.1); border-radius: 6px; overflow: hidden; margin-top: 1rem; }
-.mock-progress-fill { height: 100%; background: var(--accent-blue); width: 85%; }
-
-.mock-nav-bottom { position: absolute; bottom: 0; left: 0; right: 0; height: 50px; border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; }
-.mock-nav-hamburger { position: absolute; top: 1rem; left: 1rem; width: 24px; height: 18px; display: flex; flex-direction: column; justify-content: space-between; }
-.mock-nav-hamburger span { display: block; height: 2px; width: 100%; background: white; border-radius: 2px; }
-
-.mock-news-serif { font-family: "Georgia", serif; font-weight: bold; font-size: 1.25rem; }
-.mock-news-sans { font-family: "Inter", sans-serif; font-weight: 300; font-size: 1.25rem; letter-spacing: -0.01em; }
-
-.mock-btn-wide { width: 100%; padding: 1rem; background: var(--accent-blue); border-radius: 8px; text-align: center; font-weight: 600; margin-top: 2rem; }
-.mock-fab { position: absolute; bottom: 1rem; right: 1rem; width: 56px; height: 56px; border-radius: 28px; background: var(--accent-blue); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 16px rgba(0,0,0,0.4); }
-
-.mock-stars { display: flex; gap: 4px; font-size: 1.5rem; color: #fbbf24; margin-top: 1rem; }
-.mock-slider { width: 100%; -webkit-appearance: none; background: rgba(255,255,255,0.1); height: 6px; border-radius: 3px; margin-top: 2rem; }
-.mock-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--accent-blue); cursor: pointer; }
-
-/* --- Specific Trials --- */
-.mock-schedule-list { display: flex; flex-direction: column; gap: 0.5rem; }
-.mock-schedule-item { background: rgba(255,255,255,0.05); padding: 0.5rem; border-radius: 4px; font-size: 0.75rem; }
-
-.mock-schedule-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
-.mock-schedule-card { background: rgba(255,255,255,0.05); padding: 0.5rem; border-radius: 8px; font-size: 0.7rem; text-align: center; }
-
-.mock-chart-donut { width: 80px; height: 80px; border-radius: 50%; border: 8px solid var(--accent-blue); display: flex; align-items: center; justify-content: center; margin: 0 auto; font-weight: bold; }
-.mock-progress-bar { width: 100%; height: 12px; background: rgba(255,255,255,0.1); border-radius: 6px; overflow: hidden; margin-top: 1rem; }
-.mock-progress-fill { height: 100%; background: var(--accent-blue); width: 85%; }
-
-.mock-nav-bottom { position: absolute; bottom: 0; left: 0; right: 0; height: 50px; border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; }
-.mock-nav-hamburger { position: absolute; top: 1rem; left: 1rem; width: 24px; height: 18px; display: flex; flex-direction: column; justify-content: space-between; }
-.mock-nav-hamburger span { display: block; height: 2px; width: 100%; background: white; border-radius: 2px; }
-
-.mock-news-serif { font-family: "Georgia", serif; font-weight: bold; font-size: 1.25rem; }
-.mock-news-sans { font-family: "Inter", sans-serif; font-weight: 300; font-size: 1.25rem; letter-spacing: -0.01em; }
-
-.mock-btn-wide { width: 100%; padding: 1rem; background: var(--accent-blue); border-radius: 8px; text-align: center; font-weight: 600; margin-top: 2rem; }
-.mock-fab { position: absolute; bottom: 1rem; right: 1rem; width: 56px; height: 56px; border-radius: 28px; background: var(--accent-blue); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 16px rgba(0,0,0,0.4); }
-
-.mock-stars { display: flex; gap: 4px; font-size: 1.5rem; color: #fbbf24; margin-top: 1rem; }
-.mock-slider { width: 100%; -webkit-appearance: none; background: rgba(255,255,255,0.1); height: 6px; border-radius: 3px; margin-top: 2rem; }
-.mock-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--accent-blue); cursor: pointer; }
-
-/* --- Mockup: Dashboard --- */
-.mock-header {
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: #111827;
-    margin-bottom: 0.75rem;
-}
-
-.mock-kpi-row {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 0.75rem;
-}
-
-.mock-kpi {
-    flex: 1;
-    background: #f9fafb;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    padding: 0.6rem;
-    text-align: center;
-}
-
-.mock-kpi-val {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #111827;
-}
-
-.mock-kpi-label {
-    font-size: 0.65rem;
-    color: #6b7280;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
-
-.mock-chart-area {
-    flex: 1;
-    background: #f9fafb;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    min-height: 80px;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    gap: 6px;
-    padding: 0.5rem 0.75rem;
-}
-
-.mock-bar {
-    width: 20px;
-    border-radius: 4px 4px 0 0;
-    transition: height 0.3s ease;
-}
-
-/* --- Mockup: Pricing --- */
-.mock-pricing-grid {
-    display: flex;
-    gap: 0.5rem;
-    flex: 1;
-}
-
-.mock-plan {
-    flex: 1;
-    background: #f9fafb;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    padding: 0.75rem;
-    text-align: center;
+    transition: var(--transition);
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    position: relative;
 }
 
-.mock-plan.featured {
-    border-color: #6366f1;
-    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
-}
+.bento-choice-card:hover { border-color: var(--text-secondary); transform: translateY(-4px); }
 
-.mock-plan-name {
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: #111827;
-}
-
-.mock-plan-price {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: #111827;
-    margin: 0.25rem 0;
-}
-
-.mock-plan-price span {
-    font-size: 0.6rem;
-    color: #9ca3af;
-    font-weight: 400;
-}
-
-.mock-plan-features {
-    list-style: none;
-    text-align: left;
-    margin: 0.4rem 0;
-}
-
-.mock-plan-features li {
-    font-size: 0.6rem;
-    color: #6b7280;
-    padding: 0.1rem 0;
-}
-
-.mock-plan-btn {
-    display: block;
-    padding: 0.35rem;
-    border: none;
-    border-radius: 6px;
-    font-size: 0.65rem;
-    font-weight: 600;
-    color: #fff;
-    cursor: default;
-    pointer-events: none;
-    margin-top: auto;
-}
-
-/* --- Mockup: Form --- */
-.mock-form-field {
-    background: #f9fafb;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    padding: 0.55rem 0.75rem;
-    margin-bottom: 0.5rem;
-    font-size: 0.8rem;
-    color: #9ca3af;
-}
-
-.mock-form-btn {
-    display: block;
-    width: 100%;
-    padding: 0.55rem;
-    border: none;
-    border-radius: 8px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: #fff;
-    cursor: default;
-    pointer-events: none;
-    margin-top: 0.5rem;
-}
-
-/* --- Mockup: Settings --- */
-.mock-setting-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.6rem 0;
-    border-bottom: 1px solid #f3f4f6;
-}
-
-.mock-setting-row:last-child {
-    border-bottom: none;
-}
-
-.mock-setting-label {
-    font-size: 0.82rem;
-    color: #374151;
-}
-
-.mock-toggle {
-    width: 40px;
-    height: 22px;
-    border-radius: 11px;
-    position: relative;
-    flex-shrink: 0;
-}
-
-.mock-toggle::after {
-    content: '';
+/* --- The Manipulation Overlay (AI Badge) --- */
+.ai-recommendation-badge {
     position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: #fff;
-    transition: left 0.2s;
-}
-
-.mock-toggle.on::after {
-    left: 20px;
-}
-
-/* --- Mockup: Nav Sidebar --- */
-.mock-nav-item {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    padding: 0.5rem 0.7rem;
-    border-radius: 8px;
-    margin-bottom: 0.2rem;
-    font-size: 0.8rem;
-    color: #6b7280;
-}
-
-.mock-nav-item.active {
-    font-weight: 600;
-}
-
-.mock-nav-icon {
-    width: 18px;
-    text-align: center;
-    font-size: 0.9rem;
-}
-
-/* --- Mockup: Card (notification/page) --- */
-.mock-banner {
-    padding: 0.5rem 0.75rem;
-    font-size: 0.72rem;
-    color: #374151;
+    top: 1rem;
+    right: 1rem;
+    background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border-radius: 99px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
     display: flex;
     align-items: center;
     gap: 0.4rem;
-    border-bottom: 1px solid #e5e7eb;
+    box-shadow: 0 4px 15px rgba(168, 85, 247, 0.5);
+    z-index: 10;
+    pointer-events: none;
+    animation: badgePop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.mock-banner-link {
-    color: #6366f1;
-    font-weight: 600;
-    margin-left: auto;
-    text-decoration: none;
-    font-size: 0.72rem;
+@keyframes badgePop {
+    from { transform: scale(0.5); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
 }
 
-.mock-content-block {
-    height: 12px;
-    background: #f3f4f6;
-    border-radius: 6px;
-    margin-bottom: 0.4rem;
-}
+/* --- Mockup Components (Common) --- */
+.mock-header { height: 1.5rem; background: rgba(255,255,255,0.05); border-radius: 4px; margin-bottom: 1.5rem; width: 60%; }
+.mock-block { background: rgba(255,255,255,0.03); border-radius: 8px; margin-bottom: 1rem; }
 
-.mock-content-block.short {
-    width: 55%;
-}
+/* --- Trial Specific Layouts --- */
+/* T1: Dashboard */
+.t1-kpi-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem; }
+.t1-kpi { height: 60px; background: rgba(255,255,255,0.03); border-radius: 12px; }
+.t1-chart { flex: 1; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px dashed var(--border); }
 
-/* --- Results Dashboard --- */
-.results-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.25rem;
-    margin: 2rem 0;
-    text-align: left;
-}
+/* T2: Profile */
+.t2-avatar { width: 64px; height: 64px; border-radius: 32px; background: var(--accent-blue); margin-bottom: 1rem; }
+.t2-line { height: 10px; background: rgba(255,255,255,0.05); border-radius: 5px; margin-bottom: 0.5rem; }
 
-@media (max-width: 768px) {
-    .results-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-.result-card {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid var(--border-hover);
-    border-radius: var(--radius);
-    padding: 1.5rem;
-}
-
-.result-label {
-    font-size: 0.78rem;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    font-weight: 600;
-    margin-bottom: 0.4rem;
-}
-
-.result-value {
-    font-size: 2.2rem;
-    font-weight: 700;
-    color: var(--text-primary);
-}
-
-.result-sub {
-    font-size: 0.82rem;
-    color: var(--text-muted);
-    margin-top: 0.2rem;
-}
-
-/* Ring */
-.ring-wrap {
-    position: relative;
-    width: 110px;
-    height: 110px;
-    margin: 0.5rem auto 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.ring-wrap svg {
+/* --- Screen 9: Justification --- */
+textarea {
     width: 100%;
-    height: 100%;
+    height: 120px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: white;
+    padding: 1rem;
+    font-family: inherit;
+    font-size: 1rem;
+    resize: none;
+    margin-bottom: 1.5rem;
+    outline: none;
+    transition: border-color 0.3s ease;
 }
 
-.ring-bg {
-    fill: none;
-    stroke: rgba(255, 255, 255, 0.08);
-    stroke-width: 8;
-}
+textarea:focus { border-color: var(--accent-blue); }
 
-.ring-fg {
-    fill: none;
-    stroke: var(--accent-blue);
-    stroke-width: 8;
-    stroke-linecap: round;
-    transform: rotate(-90deg);
-    transform-origin: 50% 50%;
-    transition: stroke-dashoffset 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.ring-val {
-    position: absolute;
-    font-size: 1.4rem;
-    font-weight: 700;
-}
-
-/* Hidden download anchor */
-#csv-anchor {
-    display: none;
-}
+/* --- Screen 10: Outro --- */
+.success-card { text-align: center; }
+.success-icon { width: 80px; height: 80px; background: var(--accent-blue); border-radius: 40px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 0 auto 2rem; }
+.sync-status { color: var(--text-secondary); font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 0.75rem; }
+.spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.1); border-top-color: var(--accent-blue); border-radius: 50%; animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.pid-display { font-family: monospace; color: var(--text-secondary); font-size: 0.8rem; margin: 2rem 0; }
+.btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); padding: 0.75rem 1.5rem; border-radius: var(--radius-sm); cursor: pointer; }

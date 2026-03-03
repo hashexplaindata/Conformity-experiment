@@ -46,32 +46,10 @@ The experiment is now accessible at `http://localhost:8000/code/index.html`
 
 ## Post-Session
 
-### Step 6: Aggregate Data
+### Step 6: Verify Data Sync
 
-Combine all individual CSV files:
-
-```bash
-# Windows PowerShell
-Get-Content analytics\*.csv | Select-Object -Skip 1 | Set-Content analytics\combined.csv
-# Prepend header
-$header = (Get-Content analytics\sample_data.csv -TotalCount 1)
-$content = Get-Content analytics\combined.csv
-Set-Content analytics\combined.csv -Value ($header, $content)
-```
-
-### Step 7: View Dashboard
-
-- Open `analytics/dashboard.html` in a browser
-- Drag & drop your combined CSV file
-- Charts render automatically
-
-### Step 8: Run Statistical Analysis
-
-```bash
-python code/run_analysis.py --input analytics/combined.csv --output analytics/
-```
-
-Results saved to `analytics/results.json` and chart SVGs.
+- Access your Firebase Console.
+- Ensure all participant data is synced to the `conformity_telemetry` collection.
 
 ---
 
