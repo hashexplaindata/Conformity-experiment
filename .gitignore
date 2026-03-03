@@ -1,0 +1,10 @@
+# Sensitive config
+code/firebase-config.js
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

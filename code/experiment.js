@@ -11,14 +11,14 @@ const params = new URLSearchParams(window.location.search);
 const CFG = Object.freeze({
     NUM_TRIALS: 6,
     CONDITION: params.get('condition') === 'ai' ? 'AI_Labeled' : 'Control',
-    // --- FIREBASE CONFIGURATION ---
-    FIREBASE: {
-        apiKey: "AIzaSyASh34UQq-gOOgEkmGMZcnybxRrSDuF6yU",
-        authDomain: "conformity-experiment.firebaseapp.com",
-        projectId: "conformity-experiment",
-        storageBucket: "conformity-experiment.firebasestorage.app",
-        messagingSenderId: "197222848320",
-        appId: "1:197222848320:web:0afaeb8953330c11cbcca5"
+    // --- FIREBASE CONFIGURATION (Loaded from firebase-config.js) ---
+    FIREBASE: typeof FIREBASE_CONFIG !== 'undefined' ? FIREBASE_CONFIG : {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT_ID.appspot.com",
+        messagingSenderId: "YOUR_SENDER_ID",
+        appId: "YOUR_APP_ID"
     }
 });
 
