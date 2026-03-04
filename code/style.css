@@ -178,9 +178,39 @@ h2 { font-size: 1.75rem; font-weight: 600; letter-spacing: -0.02em; margin-botto
     transition: var(--transition);
     display: flex;
     flex-direction: column;
+    overflow: hidden; /* For inner glow/shine effects */
 }
 
-.bento-choice-card:hover { border-color: var(--text-secondary); transform: translateY(-4px); }
+.bento-choice-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(41, 151, 255, 0.08) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.bento-choice-card:hover { 
+    border-color: rgba(255, 255, 255, 0.2); 
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+}
+
+.bento-choice-card:hover::after {
+    opacity: 1;
+}
+
+.bento-choice-card:active {
+    transform: translateY(-2px) scale(0.98);
+    transition: transform 0.1s ease;
+}
+
+.bento-choice-card.selected {
+    border-color: var(--accent-blue);
+    background: rgba(41, 151, 255, 0.03);
+    box-shadow: 0 0 30px rgba(41, 151, 255, 0.15);
+}
 
 /* --- The Manipulation Overlay (AI Badge) --- */
 .ai-recommendation-badge {
