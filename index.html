@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Beta UI Diagnostic Dashboard — University Portal</title>
+    <meta name="description" content="High-fidelity UI/UX diagnostic tool for university portal optimization.">
+    
+    <!-- Pre-load Critical Assets to prevent Layout Shift & Telemetry Corruption -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="code/style.css">
+    
+    <!-- Prevent selection and touch gestures to ensure motor-mechanic purity -->
+    <style>
+        * {
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+            touch-action: pan-y;
+        }
+        input, textarea {
+            user-select: text;
+            -webkit-user-select: text;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ====== SCREEN 1: DECEPTIVE CONSENT ====== -->
+    <div id="screen-1" class="screen active">
+        <div class="bento-container">
+            <div class="bento-card welcome-hero">
+                <div class="badge">BETA v2.4</div>
+                <h1>Beta UI Diagnostic</h1>
+                <p class="subtitle">Help us optimize the University Portal experience. Your interaction telemetry helps us build faster, more intuitive interfaces.</p>
+                <div class="feature-list">
+                    <div class="feature-item"><span>⚡</span> Millisecond Accuracy</div>
+                    <div class="feature-item"><span>🛡️</span> Anonymous Telemetry</div>
+                    <div class="feature-item"><span>📊</span> Edge Computing</div>
+                </div>
+                <button id="btn-consent" class="btn-primary">Click to Consent & Begin</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== SCREEN 2: THE COVARIATE (AI FAMILIARITY) ====== -->
+    <div id="screen-2" class="screen">
+        <div class="bento-container">
+            <div class="bento-card">
+                <div class="step-indicator">Step 1 of 2</div>
+                <h2>Baseline Familiarity</h2>
+                <p class="instruction">How often do you utilize Generative AI tools (e.g., ChatGPT, Midjourney, Copilot) in your workflow?</p>
+                
+                <div class="option-list">
+                    <button class="btn-familiarity" data-val="1">
+                        <span class="val">1</span>
+                        <span class="label">Never</span>
+                    </button>
+                    <button class="btn-familiarity" data-val="2">
+                        <span class="val">2</span>
+                        <span class="label">Rarely</span>
+                    </button>
+                    <button class="btn-familiarity" data-val="3">
+                        <span class="val">3</span>
+                        <span class="label">Sometimes</span>
+                    </button>
+                    <button class="btn-familiarity" data-val="4">
+                        <span class="val">4</span>
+                        <span class="label">Frequently</span>
+                    </button>
+                    <button class="btn-familiarity" data-val="5">
+                        <span class="val">5</span>
+                        <span class="label">Daily</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== SCREENS 3-8: THE 6 TRIAL BENTO GRIDS ====== -->
+    <div id="screen-trial" class="screen">
+        <div class="trial-header">
+            <div class="progress-track">
+                <div id="progress-fill" class="progress-fill"></div>
+            </div>
+            <div id="trial-counter" class="trial-counter">Diagnostic 1/6</div>
+        </div>
+
+        <div class="bento-grid-deception" id="trial-grid">
+            <!-- Dynamically injected by experiment.js -->
+        </div>
+        
+        <div class="trial-footer">
+            <p>Select the layout that feels more "Production Ready"</p>
+        </div>
+    </div>
+
+    <!-- ====== SCREEN 9: THE NLP ANCHOR (SEMANTIC JUSTIFICATION) ====== -->
+    <div id="screen-9" class="screen">
+        <div class="bento-container">
+            <div class="bento-card">
+                <div class="step-indicator">Final Step</div>
+                <h2>Strategic Rationalization</h2>
+                <p class="instruction">In one sentence, what was your primary strategy for choosing between the layouts?</p>
+                
+                <textarea id="semantic-justification" placeholder="My strategy was based on..." maxlength="280"></textarea>
+                
+                <button id="btn-finalize" class="btn-primary" disabled>Complete Diagnostic</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== SCREEN 10: THE OUTRO ====== -->
+    <div id="screen-10" class="screen">
+        <div class="bento-container">
+            <div class="bento-card success-card">
+                <div class="success-icon">✓</div>
+                <h1>Session Logged</h1>
+                <p class="subtitle">Thank you for contributing to the Beta UI Diagnostic. Your telemetry has been securely hashed and synchronized.</p>
+                
+                <div id="sync-status" class="sync-status">
+                    <span class="spinner"></span> Synchronizing Payload...
+                </div>
+
+                <div id="final-actions" style="display:none;">
+                    <p class="pid-display">Participant ID: <span id="display-pid"></span></p>
+                    <button class="btn-secondary" onclick="window.location.reload()">Restart Session</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs (Web V9 Modular compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+    
+    <!-- Project Scripts -->
+    <script src="code/firebase-config.js"></script>
+    <script src="code/experiment.js"></script>
+</body>
+
+</html>
