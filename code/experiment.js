@@ -14,17 +14,36 @@ const CFG = Object.freeze({
     COLLECTION: 'conformity_telemetry'
 });
 
+// --- Participant ID Generation ---
+function generatePID() {
+    try {
+        return self.crypto.randomUUID();
+    } catch (e) {
+        return Math.random().toString(36).substring(2, 15) +
+               Math.random().toString(36).substring(2, 15);
+    }
+}
+
 // --- State Machine ---
 const STATE = {
-    pid: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
+    pid: localStorage.getItem('experiment_pid') || generatePID(),
     condition: CFG.CONDITION,
     covariate: 0,
     currentTrial: 0,
-    results: [], // Tidy Data Long Format
+    results: [],
     trialStartTime: 0,
     isTrialActive: false,
-    justification: ""
+    justification: "",
+    activeScreen: null,
+    pendingTransitionTimer: null
 };
+
+// Persist PID to localStorage
+try {
+    localStorage.setItem('experiment_pid', STATE.pid);
+} catch (e) {
+    // Silent fallback
+}
 
 // --- Trial Definitions (Pixel-Perfect Components) ---
 // --- High-Fidelity, Zero-Latency UI Trials (Iqra University Context) ---
@@ -76,7 +95,7 @@ const TRIALS = [
                     </div>
                 </div>
             </div>`,
-        target: 'B' // Hypothesized preference for modern Bento grid layouts
+        target: 'B'
     },
     {
         domain: 'Data Visualization (HEC Attendance Warning)',
@@ -122,7 +141,7 @@ const TRIALS = [
                     <strong>Alert:</strong> You can only miss 2 more classes in RM-2 before facing HEC examination block.
                 </div>
             </div>`,
-        target: 'A' 
+        target: 'A'
     },
     {
         domain: 'Financial Overview (Fee Voucher)',
@@ -156,7 +175,7 @@ const TRIALS = [
                 </div>
                 <h3 style="font-size:1.2rem; margin:0 0 5px 0;">Spring 2026 Invoice</h3>
                 <p style="font-size:0.85rem; color:var(--text-secondary); margin:0 0 25px 0;">Challan: IU-9938-26</p>
-                
+
                 <div style="background:var(--bg-surface); padding:20px; border-radius:16px; margin-bottom:20px;">
                     <span style="display:block; font-size:0.85rem; color:#ff453a; font-weight:600; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Due March 10</span>
                     <span style="display:block; font-size:2rem; font-weight:800; letter-spacing:-1px;">Rs. 95,500</span>
@@ -242,7 +261,7 @@ const TRIALS = [
                     <h3 style="font-size:1.1rem; margin:0 0 6px 0;">RM-2 Instructor Evaluation</h3>
                     <p style="font-size:0.85rem; color:var(--text-secondary); margin:0; line-height:1.4;">"The instructor provided clear grading rubrics and feedback."</p>
                 </div>
-                
+
                 <div style="padding: 20px 10px;">
                     <div style="position:relative; width:100%; height:6px; background:var(--bg-surface); border-radius:3px;">
                         <div style="position:absolute; top:0; left:0; height:100%; width:75%; background:var(--accent-blue); border-radius:3px;"></div>
@@ -293,7 +312,6 @@ const TRIALS = [
 
 // --- DOM Elements ---
 const DOM = {
-    screens: document.querySelectorAll('.screen'),
     btnConsent: document.getElementById('btn-consent'),
     btnsFamiliarity: document.querySelectorAll('.btn-familiarity'),
     trialGrid: document.getElementById('trial-grid'),
@@ -308,34 +326,49 @@ const DOM = {
 
 // --- Navigation Logic ---
 function showScreen(id) {
-    DOM.screens.forEach(s => {
-        s.classList.remove('active');
-        s.style.display = 'none';
-    });
-    const target = document.getElementById(`screen-${id}`);
+    const target = document.getElementById('screen-' + id);
+    if (!target || target === STATE.activeScreen) return;
+
+    const outgoing = STATE.activeScreen;
+    STATE.activeScreen = target;
+
+    if (outgoing) {
+        outgoing.classList.remove('active');
+        setTimeout(() => { outgoing.style.display = 'none'; }, 400);
+    }
+
     target.style.display = 'flex';
-    setTimeout(() => target.classList.add('active'), 50);
+    if (STATE.pendingTransitionTimer) clearTimeout(STATE.pendingTransitionTimer);
+    STATE.pendingTransitionTimer = setTimeout(() => {
+        target.classList.add('active');
+        STATE.pendingTransitionTimer = null;
+    }, 50);
 }
 
 // --- Experiment Logic ---
 function init() {
+    STATE.activeScreen = document.querySelector('.screen.active');
+
     // Navigation Lock
-    window.history.pushState(null, "", window.location.href);
-    window.onpopstate = () => window.history.pushState(null, "", window.location.href);
+    window.history.replaceState(null, document.title, window.location.href);
+    window.history.pushState(null, document.title, window.location.href);
+    window.addEventListener('popstate', () => {
+        window.history.go(1);
+    });
 
     // Screen 1 Event
     DOM.btnConsent.addEventListener('click', () => showScreen(2));
 
     // Screen 2 Event
-    let covariateSelected = false; 
-    DOM.btnsFamiliarity.forEach(btn => { 
-        btn.addEventListener('click', () => { 
-            if (covariateSelected) return; // Prevent double-tap 
-            covariateSelected = true; 
-            STATE.covariate = parseInt(btn.dataset.val); 
-            showScreen('trial'); 
-            loadNextTrial(); 
-        }); 
+    let covariateSelected = false;
+    DOM.btnsFamiliarity.forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (covariateSelected) return;
+            covariateSelected = true;
+            STATE.covariate = parseInt(btn.dataset.val);
+            showScreen('trial');
+            loadNextTrial();
+        });
     });
 
     // Screen 9 Events
@@ -344,12 +377,11 @@ function init() {
     });
 
     DOM.btnFinalize.addEventListener('click', () => {
+        DOM.btnFinalize.disabled = true;
         STATE.justification = DOM.textareaJustification.value.trim();
         showScreen(10);
         executeBatchPayload();
     });
-
-    console.log(`Diagnostic Engine Initialized. PID: ${STATE.pid} | Condition: ${STATE.condition}`);
 }
 
 function loadNextTrial() {
@@ -359,43 +391,39 @@ function loadNextTrial() {
     }
 
     const trial = TRIALS[STATE.currentTrial];
-    DOM.trialCounter.innerText = `Diagnostic ${STATE.currentTrial + 1}/${CFG.NUM_TRIALS}`;
+    DOM.trialCounter.textContent = `Diagnostic ${STATE.currentTrial + 1}/${CFG.NUM_TRIALS}`;
     DOM.progressFill.style.width = `${(STATE.currentTrial / CFG.NUM_TRIALS) * 100}%`;
 
-    // Randomize L/R positioning to prevent motor habituation
     const leftIsA = Math.random() > 0.5;
-    
-    // Build the Bento Choice Cards
+
     DOM.trialGrid.innerHTML = '';
-    
+
     const cardL = createChoiceCard(leftIsA ? 'A' : 'B', trial);
     const cardR = createChoiceCard(leftIsA ? 'B' : 'A', trial);
-    
+
     DOM.trialGrid.appendChild(cardL);
     DOM.trialGrid.appendChild(cardR);
 
-    // Inject AI Badge for experimental condition
     if (STATE.condition === 'ai_labeled') {
-        // Find which card is the "target" layout (A or B)
         const targetType = trial.target;
-        
-        // Find the DOM element for that specific layout type
-        const targetCard = (leftIsA && targetType === 'A') || (!leftIsA && targetType === 'B') 
-            ? cardL 
+        const targetCard = (leftIsA && targetType === 'A') || (!leftIsA && targetType === 'B')
+            ? cardL
             : cardR;
-        
+
         const badge = document.createElement('div');
         badge.className = 'ai-recommendation-badge';
-        badge.innerHTML = '<span>✨</span> AI Recommended';
+        const badgeSpan = document.createElement('span');
+        badgeSpan.textContent = '✨';
+        badge.appendChild(badgeSpan);
+        badge.appendChild(document.createTextNode(' AI Recommended'));
         targetCard.appendChild(badge);
     }
 
-    // Start millisecond-accurate timer
-    requestAnimationFrame(() => { 
-        requestAnimationFrame(() => { 
-            STATE.trialStartTime = performance.now(); 
-            STATE.isTrialActive = true; 
-        }); 
+    requestAnimationFrame(() => {
+        setTimeout(() => {
+            STATE.trialStartTime = performance.now();
+            STATE.isTrialActive = true;
+        }, 0);
     });
 }
 
@@ -403,8 +431,7 @@ function createChoiceCard(type, trial) {
     const card = document.createElement('div');
     card.className = 'bento-choice-card';
     card.innerHTML = type === 'A' ? trial.renderA() : trial.renderB();
-    
-    // Add mouse move listener for the radial glow effect
+
     card.addEventListener('mousemove', (e) => {
         const rect = card.getBoundingClientRect();
         const x = ((e.clientX - rect.left) / rect.width) * 100;
@@ -413,23 +440,26 @@ function createChoiceCard(type, trial) {
         card.style.setProperty('--mouse-y', `${y}%`);
     });
 
-    card.addEventListener('pointerdown', () => {
+    const handlePointerDown = (e) => {
         if (!STATE.isTrialActive) return;
-        
-        // Visual feedback
+
+        e.preventDefault();
+        STATE.isTrialActive = false;
+
+        card.removeEventListener('pointerdown', handlePointerDown);
         card.classList.add('selected');
-        
+
         handleUserSelection(type, trial);
-    });
-    
+    };
+
+    card.addEventListener('pointerdown', handlePointerDown);
+
     return card;
 }
 
 function handleUserSelection(selection, trial) {
-    const rt = performance.now() - STATE.trialStartTime;
-    STATE.isTrialActive = false;
+    const latency = performance.now() - STATE.trialStartTime;
 
-    // Log Tidy Data Row
     STATE.results.push({
         participant_id: STATE.pid,
         experimental_condition: STATE.condition,
@@ -439,26 +469,37 @@ function handleUserSelection(selection, trial) {
         ai_badge_position: STATE.condition === 'ai_labeled' ? `Layout ${trial.target}` : 'none',
         user_selection: `Layout ${selection}`,
         chose_target_layout: selection === trial.target,
-        reaction_time_ms: parseFloat(rt.toFixed(2)),
-        semantic_justification: null, // Placeholder
+        response_latency_ms: parseFloat(latency.toFixed(2)),
         timestamp: Date.now()
     });
 
     STATE.currentTrial++;
-    
-    // Debounce transition for visual feedback
+
     setTimeout(loadNextTrial, 200);
 }
 
 // --- Firebase Integration (Batch Write) ---
 async function executeBatchPayload() {
-    // Append justification to all rows
     STATE.results.forEach(row => row.semantic_justification = STATE.justification);
 
+    let localBackupSucceeded = false;
     try {
-        // Check for Firebase (initialized in index.html via firebase-config.js)
-        if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
+        localStorage.setItem('telemetry_backup_' + STATE.pid, JSON.stringify(STATE.results));
+        localBackupSucceeded = true;
+    } catch (storageError) {
+        // Silent fallback
+    }
+
+    try {
+        if (typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length > 0) {
             const db = firebase.firestore();
+
+            try {
+                await db.enablePersistence({ synchronizeTabs: true });
+            } catch (persistErr) {
+                // Silent fallback
+            }
+
             const batch = db.batch();
 
             STATE.results.forEach(data => {
@@ -467,22 +508,45 @@ async function executeBatchPayload() {
             });
 
             await batch.commit();
+            await db.waitForPendingWrites();
+
+            try { localStorage.removeItem('telemetry_backup_' + STATE.pid); } catch(e) {}
+            try { localStorage.removeItem('experiment_pid'); } catch(e) {}
+
             onSyncSuccess();
         } else {
-            console.warn("Firebase not detected. Payload logged to console:", STATE.results);
-            setTimeout(onSyncSuccess, 1500); // Simulate sync delay
+            if (!localBackupSucceeded) {
+                try {
+                    localStorage.setItem('telemetry_backup_' + STATE.pid, JSON.stringify(STATE.results));
+                } catch (storageError) {
+                    // Silent fallback
+                }
+            }
+            setTimeout(onSyncSuccess, 0);
         }
     } catch (error) {
-        console.error("Critical Sync Failure:", error);
-        DOM.syncStatus.innerHTML = `<span style="color:#ff453a">⚠️ Sync Failed. Error: ${error.code || 'Network'}</span>`;
-        // Potential fallback: Save to localStorage for later recovery
+        if (!localBackupSucceeded) {
+            try {
+                localStorage.setItem('telemetry_backup_' + STATE.pid, JSON.stringify(STATE.results));
+                localBackupSucceeded = true;
+            } catch (storageError) {
+                // Silent fallback
+            }
+        }
+
+        DOM.syncStatus.textContent = localBackupSucceeded
+            ? '⚠️ Network Timeout — your responses are saved locally'
+            : '⚠️ Network Timeout';
+        DOM.syncStatus.style.color = '#ff453a';
+        DOM.finalActions.style.display = 'block';
+        DOM.displayPid.textContent = STATE.pid;
     }
 }
 
 function onSyncSuccess() {
     DOM.syncStatus.style.display = 'none';
     DOM.finalActions.style.display = 'block';
-    DOM.displayPid.innerText = STATE.pid;
+    DOM.displayPid.textContent = STATE.pid;
 }
 
 // Initialize on Load
