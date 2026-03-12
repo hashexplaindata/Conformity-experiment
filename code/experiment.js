@@ -440,7 +440,6 @@ function handleUserSelection(selection, trial) {
         user_selection: `Layout ${selection}`,
         chose_target_layout: selection === trial.target,
         reaction_time_ms: parseFloat(rt.toFixed(2)),
-        semantic_justification: null, // Placeholder
         timestamp: Date.now()
     });
 
