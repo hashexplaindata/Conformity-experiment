@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This experiment tests whether an "AI Recommended" label influences users' UI design preferences. Participants view 8 pairs of interface mockups and select their preferred option. Half see neutral labels (control); half see one option per pair marked with a "★ AI Recommended" badge (treatment).
+This experiment tests whether an "AI Recommended" label influences users' UI design preferences. Participants view 6 pairs of interface mockups and select their preferred option. Half see neutral labels (control); half see one option per pair marked with a "✨ AI Recommended" badge (treatment).
 
 ## Folder Structure
 
@@ -34,5 +34,18 @@ This experiment tests whether an "AI Recommended" label influences users' UI des
 
 [Your Name / Email]
 
+## Trial Domains
+
+The experiment includes 6 UI comparison trials covering:
+
+1. **Information Density (Course Schedule)** - List view vs. Grid view
+2. **Data Visualization (HEC Attendance Warning)** - Circular gauge vs. Progress bar
+3. **Financial Overview (Fee Voucher)** - Card layout vs. Centered layout
+4. **Campus Event (Visual Dominance)** - Visual-first vs. Compact layout
+5. **Interaction (QEC Faculty Evaluation)** - Radio buttons vs. Slider
+6. **Navigation Hierarchy (Digital Library)** - Floating search vs. Header-integrated search
+
+All trials use Iqra University and Pakistan Higher Education Commission (HEC) context for realism.
+
 ---
-_Generated: 2026-02-27 | Version: 1.0_
+_Last updated: 2026-03-12 | Version: 2.0_

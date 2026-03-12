@@ -18,9 +18,9 @@ The experiment is now accessible at `http://localhost:8000/code/index.html`
 ### Step 2: Verify Both Conditions
 
 - **Control Link**: `http://localhost:8000/code/index.html?condition=control`
-  - Confirm: No "AI Suggested" badges visible.
+  - Confirm: No "✨ AI Recommended" badges visible.
 - **AI Link**: `http://localhost:8000/code/index.html?condition=ai`
-  - Confirm: "✨ AI Suggested" badges visible on designated options.
+  - Confirm: "✨ AI Recommended" badges visible on designated options.
 
 ### Step 3: Prepare Distribution Link
 
@@ -34,13 +34,15 @@ The experiment is now accessible at `http://localhost:8000/code/index.html`
 ### Step 4: Welcome Participants
 
 - Instruct participants to open the link in their browser
-- They will be randomly assigned to control or AI condition
+- Participants will be assigned to either control or AI condition based on the URL parameter
 - Estimated completion time: 3-5 minutes per participant
+- 6 trial pairs will be shown in randomized order
 
 ### Step 5: Monitor Progress
 
-- Each participant downloads their own CSV upon completion
-- Collect CSV files from participants
+- Data is automatically synced to Firebase Firestore (`conformity_telemetry` collection)
+- Participants see a completion confirmation with their anonymous Participant ID
+- Data includes reaction times, selections, AI familiarity rating, and optional justification
 
 ---
 
@@ -48,18 +50,28 @@ The experiment is now accessible at `http://localhost:8000/code/index.html`
 
 ### Step 6: Verify Data Sync
 
-- Access your Firebase Console.
-- Ensure all participant data is synced to the `conformity_telemetry` collection.
+- Access your Firebase Console at [console.firebase.google.com](https://console.firebase.google.com)
+- Navigate to Firestore Database
+- Check the `conformity_telemetry` collection for new participant data
+- Each participant record includes: condition, trial results, reaction times, AI familiarity, and timestamps
 
 ---
 
 ## Deployment (Optional)
 
+### Firebase Hosting
+
+1. Install Firebase CLI: `npm install -g firebase-tools`
+2. Login: `firebase login`
+3. Deploy: `firebase deploy --only hosting`
+4. Access at your Firebase hosting URL (e.g., `conformity-experiment.web.app`)
+
 ### GitHub Pages
 
-1. Push the `code/` folder to a GitHub repository
+1. Push the repository to GitHub
 2. Enable GitHub Pages in Settings > Pages
-3. Share the Pages URL with participants
+3. Set source to the `main` branch
+4. Access at `https://[username].github.io/Conformity-experiment/code/index.html?condition=control` or `?condition=ai`
 
 ### Netlify
 
@@ -72,9 +84,10 @@ The experiment is now accessible at `http://localhost:8000/code/index.html`
 
 | Issue | Solution |
 |-------|----------|
-| Images not loading | Ensure all files are in the same `code/` directory |
-| CSV download fails | Check browser popup blocker settings |
-| Charts not rendering | Ensure internet connection (Chart.js loads from CDN) |
+| Badges not appearing | Check URL parameter: `?condition=ai` (not `?condition=control`) |
+| Firebase sync fails | Check internet connection and Firebase configuration in `experiment.js` |
+| Blank screen | Ensure local server is running and path is correct |
+| Browser compatibility | Use modern browsers (Chrome 90+, Firefox 88+, Safari 14+, Edge 90+) |
 
 ---
-_Last updated: 2026-02-27_
+_Last updated: 2026-03-12_
