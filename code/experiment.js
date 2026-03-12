@@ -475,7 +475,7 @@ async function executeBatchPayload() {
     } catch (error) {
         console.error("Critical Sync Failure:", error);
         DOM.syncStatus.innerHTML = `<span style="color:#ff453a">⚠️ Sync Failed. Error: ${error.code || 'Network'}</span>`;
-        // Potential fallback: Save to localStorage for later recovery
+        localStorage.setItem('failed_sync', JSON.stringify(STATE.results));
     }
 }
 
