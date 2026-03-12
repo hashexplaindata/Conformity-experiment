@@ -473,9 +473,11 @@ async function executeBatchPayload() {
             setTimeout(onSyncSuccess, 1500); // Simulate sync delay
         }
     } catch (error) {
-        console.error("Critical Sync Failure:", error);
-        DOM.syncStatus.innerHTML = `<span style="color:#ff453a">⚠️ Sync Failed. Error: ${error.code || 'Network'}</span>`;
-        // Potential fallback: Save to localStorage for later recovery
+        // Fallback: Save to localStorage for later recovery
+        localStorage.setItem(`telemetry_backup_${STATE.pid}`, JSON.stringify(STATE.results));
+
+        DOM.syncStatus.style.color = "#ff453a";
+        DOM.syncStatus.textContent = "Diagnostic Complete. A network timeout occurred. You may safely close this tab.";
     }
 }
 
