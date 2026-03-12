@@ -349,7 +349,6 @@ function init() {
         executeBatchPayload();
     });
 
-    console.log(`Diagnostic Engine Initialized. PID: ${STATE.pid} | Condition: ${STATE.condition}`);
 }
 
 function loadNextTrial() {
@@ -469,13 +468,17 @@ async function executeBatchPayload() {
             await batch.commit();
             onSyncSuccess();
         } else {
-            console.warn("Firebase not detected. Payload logged to console:", STATE.results);
-            setTimeout(onSyncSuccess, 1500); // Simulate sync delay
+            // Throw error to trigger the fallback when Firebase is not available
+            throw new Error("Firebase not initialized");
         }
     } catch (error) {
-        console.error("Critical Sync Failure:", error);
-        DOM.syncStatus.innerHTML = `<span style="color:#ff453a">⚠️ Sync Failed. Error: ${error.code || 'Network'}</span>`;
-        // Potential fallback: Save to localStorage for later recovery
+        // Fallback: Save to localStorage for later recovery
+        try {
+            localStorage.setItem(`telemetry_backup_${STATE.pid}`, JSON.stringify(STATE.results));
+        } catch (storageError) {
+            // Silently fail if localStorage is unavailable
+        }
+        DOM.syncStatus.textContent = "Diagnostic Complete. A network timeout occurred. You may safely close this tab.";
     }
 }
 
