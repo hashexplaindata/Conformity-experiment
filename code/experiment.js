@@ -23,7 +23,8 @@ const STATE = {
     results: [], // Tidy Data Long Format
     trialStartTime: 0,
     isTrialActive: false,
-    justification: ""
+    justification: "",
+    activeScreen: null
 };
 
 // --- Trial Definitions (Pixel-Perfect Components) ---
@@ -308,17 +309,26 @@ const DOM = {
 
 // --- Navigation Logic ---
 function showScreen(id) {
-    DOM.screens.forEach(s => {
-        s.classList.remove('active');
-        s.style.display = 'none';
-    });
     const target = document.getElementById(`screen-${id}`);
+    if (!target) return;
+
+    if (STATE.activeScreen) {
+        STATE.activeScreen.classList.remove('active');
+        STATE.activeScreen.style.display = 'none';
+    }
+
     target.style.display = 'flex';
+    // Ensure active class is removed before adding it back to trigger transitions
+    target.classList.remove('active');
     setTimeout(() => target.classList.add('active'), 50);
+    STATE.activeScreen = target;
 }
 
 // --- Experiment Logic ---
 function init() {
+    // Initialize Active Screen Tracking
+    STATE.activeScreen = document.querySelector('.screen.active');
+
     // Navigation Lock
     window.history.pushState(null, "", window.location.href);
     window.onpopstate = () => window.history.pushState(null, "", window.location.href);

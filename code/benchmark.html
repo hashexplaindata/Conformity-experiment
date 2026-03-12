@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Benchmark</title>
+    <style>
+        .screen { display: none; opacity: 0; transition: opacity 0.4s ease; }
+        .screen.active { display: flex; opacity: 1; }
+    </style>
+</head>
+<body>
+    <div id="screens-container"></div>
+    <script>
+        // Create 100 screens to make the difference more measurable
+        const container = document.getElementById('screens-container');
+        for (let i = 0; i < 100; i++) {
+            const div = document.createElement('div');
+            div.id = `screen-${i}`;
+            div.className = 'screen';
+            div.textContent = `Screen ${i}`;
+            container.appendChild(div);
+        }
+        document.getElementById('screen-0').classList.add('active');
+        document.getElementById('screen-0').style.display = 'flex';
+
+        const DOM = {
+            screens: document.querySelectorAll('.screen')
+        };
+
+        // Original showScreen
+        function showScreenOriginal(id) {
+            DOM.screens.forEach(s => {
+                s.classList.remove('active');
+                s.style.display = 'none';
+            });
+            const target = document.getElementById(`screen-${id}`);
+            target.style.display = 'flex';
+            // We omit setTimeout for benchmarking the synchronous part
+            target.classList.add('active');
+        }
+
+        // Optimized showScreen (to be tested)
+        let activeScreen = document.getElementById('screen-0');
+        function showScreenOptimized(id) {
+            if (activeScreen) {
+                activeScreen.classList.remove('active');
+                activeScreen.style.display = 'none';
+            }
+            const target = document.getElementById(`screen-${id}`);
+            target.style.display = 'flex';
+            target.classList.add('active');
+            activeScreen = target;
+        }
+
+        function benchmark(fn, iterations) {
+            const start = performance.now();
+            for (let i = 0; i < iterations; i++) {
+                fn(i % 100);
+            }
+            const end = performance.now();
+            return end - start;
+        }
+
+        setTimeout(() => {
+            const iterations = 10000;
+            const timeOriginal = benchmark(showScreenOriginal, iterations);
+            const timeOptimized = benchmark(showScreenOptimized, iterations);
+
+            console.log(`Original: ${timeOriginal.toFixed(4)}ms`);
+            console.log(`Optimized: ${timeOptimized.toFixed(4)}ms`);
+            console.log(`Improvement: ${((timeOriginal - timeOptimized) / timeOriginal * 100).toFixed(2)}%`);
+
+            const result = document.createElement('div');
+            result.id = 'benchmark-result';
+            result.textContent = JSON.stringify({
+                timeOriginal,
+                timeOptimized,
+                iterations
+            });
+            document.body.appendChild(result);
+        }, 1000);
+    </script>
+</body>
+</html>
