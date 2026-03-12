@@ -7,7 +7,7 @@
 'use strict';
 
 // --- Configuration & Condition Extraction ---
-const params = new URLSearchParams(window.location.search);
+const params = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : new URLSearchParams('');
 const CFG = Object.freeze({
     NUM_TRIALS: 6,
     CONDITION: params.get('condition') === 'ai' ? 'ai_labeled' : 'control',
@@ -292,7 +292,7 @@ const TRIALS = [
 ];
 
 // --- DOM Elements ---
-const DOM = {
+const DOM = typeof document !== 'undefined' ? {
     screens: document.querySelectorAll('.screen'),
     btnConsent: document.getElementById('btn-consent'),
     btnsFamiliarity: document.querySelectorAll('.btn-familiarity'),
@@ -304,7 +304,7 @@ const DOM = {
     syncStatus: document.getElementById('sync-status'),
     finalActions: document.getElementById('final-actions'),
     displayPid: document.getElementById('display-pid')
-};
+} : {};
 
 // --- Navigation Logic ---
 function showScreen(id) {
@@ -486,4 +486,16 @@ function onSyncSuccess() {
 }
 
 // Initialize on Load
-window.addEventListener('DOMContentLoaded', init);
+if (typeof window !== 'undefined') {
+    window.addEventListener('DOMContentLoaded', init);
+}
+
+// Export for testing
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        STATE,
+        CFG,
+        handleUserSelection,
+        TRIALS
+    };
+}

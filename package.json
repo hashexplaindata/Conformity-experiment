@@ -1,0 +1,9 @@
+{
+  "name": "conformity-experiment",
+  "version": "1.0.0",
+  "description": "Behavioral Diagnostic Tool for UI Conformity",
+  "main": "code/experiment.js",
+  "scripts": {
+    "test": "node tests/experiment.test.js"
+  }
+}
