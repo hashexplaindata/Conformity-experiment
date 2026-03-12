@@ -16,7 +16,7 @@ const CFG = Object.freeze({
 
 // --- State Machine ---
 const STATE = {
-    pid: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
+    pid: self.crypto.randomUUID(),
     condition: CFG.CONDITION,
     covariate: 0,
     currentTrial: 0,
@@ -348,8 +348,6 @@ function init() {
         showScreen(10);
         executeBatchPayload();
     });
-
-    console.log(`Diagnostic Engine Initialized. PID: ${STATE.pid} | Condition: ${STATE.condition}`);
 }
 
 function loadNextTrial() {
@@ -469,13 +467,13 @@ async function executeBatchPayload() {
             await batch.commit();
             onSyncSuccess();
         } else {
-            console.warn("Firebase not detected. Payload logged to console:", STATE.results);
-            setTimeout(onSyncSuccess, 1500); // Simulate sync delay
+            localStorage.setItem(`telemetry_backup_${STATE.pid}`, JSON.stringify(STATE.results));
+            setTimeout(onSyncSuccess, 0); // Simulate sync delay
         }
     } catch (error) {
-        console.error("Critical Sync Failure:", error);
-        DOM.syncStatus.innerHTML = `<span style="color:#ff453a">⚠️ Sync Failed. Error: ${error.code || 'Network'}</span>`;
-        // Potential fallback: Save to localStorage for later recovery
+        localStorage.setItem(`telemetry_backup_${STATE.pid}`, JSON.stringify(STATE.results));
+        DOM.syncStatus.textContent = '⚠️ Network Timeout';
+        DOM.syncStatus.style.color = '#ff453a';
     }
 }
 
