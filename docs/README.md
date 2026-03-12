@@ -16,7 +16,7 @@ This experiment tests whether an "AI Recommended" label influences users' UI des
 1. Open `docs/RUNBOOK.md` and follow Step 1
 2. Open `http://localhost:8000/code/index.html?condition=control` (Control)
 3. Open `http://localhost:8000/code/index.html?condition=ai` (Treatment)
-4. Data is synced to Firebase and available via CSV download.
+4. Data is synced to Firebase Firestore collection: `conformity_telemetry`
 
 ## Key Files
 
