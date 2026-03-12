@@ -8,6 +8,7 @@
     --bg-void: #000000;
     --bg-card: #111111;
     --bg-surface: #1a1a1a;
+    --bg-main: var(--bg-void);
     --text-primary: #ffffff;
     --text-secondary: #a1a1a6;
     --accent-blue: #2997ff;
@@ -31,9 +32,19 @@ body {
     font-family: 'Inter', -apple-system, sans-serif;
     background-color: var(--bg-void);
     color: var(--text-primary);
-    overflow: hidden; /* Prevent scrolling during experiment */
-    height: 100vh;
+    overflow: hidden;
+    height: 100dvh;
     width: 100vw;
+    overscroll-behavior-y: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+#display-pid,
+.pid-display,
+[data-selectable] {
+    -webkit-user-select: text;
+    user-select: text;
 }
 
 /* --- Screen Transitions --- */
@@ -92,6 +103,14 @@ h1 { font-size: 2.5rem; font-weight: 700; letter-spacing: -0.04em; margin-bottom
 h2 { font-size: 1.75rem; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 1rem; }
 .subtitle { font-size: 1.1rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 2rem; }
 .instruction { color: var(--text-secondary); margin-bottom: 2rem; }
+.step-indicator { font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem; }
+
+/* --- Feature List --- */
+.feature-list { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 2rem; }
+.feature-item { display: flex; align-items: center; gap: 0.75rem; font-size: 0.95rem; color: var(--text-secondary); }
+
+/* --- Options List --- */
+.option-list { display: flex; flex-direction: column; gap: 0.75rem; }
 
 /* --- Buttons --- */
 .btn-primary {
@@ -119,16 +138,27 @@ h2 { font-size: 1.75rem; font-weight: 600; letter-spacing: -0.02em; margin-botto
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
     padding: 1rem;
-    margin-bottom: 0.75rem;
     cursor: pointer;
     transition: var(--transition);
     color: white;
+    font-size: 1rem;
 }
 
 .btn-familiarity:hover { background: rgba(255,255,255,0.08); border-color: var(--text-secondary); }
 .btn-familiarity.active { background: var(--accent-blue); border-color: var(--accent-blue); }
 .btn-familiarity .val { font-weight: 700; font-size: 1.2rem; }
 .btn-familiarity .label { font-size: 0.9rem; font-weight: 500; }
+
+.btn-secondary {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+}
 
 /* --- Trial Grid & Bento Deception --- */
 .trial-header {
@@ -166,9 +196,21 @@ h2 { font-size: 1.75rem; font-weight: 600; letter-spacing: -0.02em; margin-botto
     .bento-grid-deception { grid-template-columns: 1fr 1fr; }
 }
 
+.trial-footer {
+    width: 100%;
+    max-width: 900px;
+    margin-top: 1.5rem;
+    text-align: center;
+}
+
+.trial-footer p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
 /* --- Pixel-Perfect Geometric Mirroring --- */
 .bento-choice-card {
-    position: relative; /* CRITICAL for absolute badge */
+    position: relative;
     background: var(--bg-card);
     border: 2px solid var(--border);
     border-radius: var(--radius);
@@ -178,7 +220,7 @@ h2 { font-size: 1.75rem; font-weight: 600; letter-spacing: -0.02em; margin-botto
     transition: var(--transition);
     display: flex;
     flex-direction: column;
-    overflow: hidden; /* For inner glow/shine effects */
+    overflow: hidden;
 }
 
 .bento-choice-card::after {
@@ -191,8 +233,8 @@ h2 { font-size: 1.75rem; font-weight: 600; letter-spacing: -0.02em; margin-botto
     pointer-events: none;
 }
 
-.bento-choice-card:hover { 
-    border-color: rgba(255, 255, 255, 0.2); 
+.bento-choice-card:hover {
+    border-color: rgba(255, 255, 255, 0.2);
     transform: translateY(-4px) scale(1.01);
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
 }
@@ -230,6 +272,9 @@ h2 { font-size: 1.75rem; font-weight: 600; letter-spacing: -0.02em; margin-botto
     box-shadow: 0 4px 15px rgba(168, 85, 247, 0.5);
     z-index: 10;
     pointer-events: none;
+    -webkit-font-smoothing: antialiased;
+    backface-visibility: hidden;
+    user-select: none;
     animation: badgePop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
@@ -237,20 +282,6 @@ h2 { font-size: 1.75rem; font-weight: 600; letter-spacing: -0.02em; margin-botto
     from { transform: scale(0.5); opacity: 0; }
     to { transform: scale(1); opacity: 1; }
 }
-
-/* --- Mockup Components (Common) --- */
-.mock-header { height: 1.5rem; background: rgba(255,255,255,0.05); border-radius: 4px; margin-bottom: 1.5rem; width: 60%; }
-.mock-block { background: rgba(255,255,255,0.03); border-radius: 8px; margin-bottom: 1rem; }
-
-/* --- Trial Specific Layouts --- */
-/* T1: Dashboard */
-.t1-kpi-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem; }
-.t1-kpi { height: 60px; background: rgba(255,255,255,0.03); border-radius: 12px; }
-.t1-chart { flex: 1; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px dashed var(--border); }
-
-/* T2: Profile */
-.t2-avatar { width: 64px; height: 64px; border-radius: 32px; background: var(--accent-blue); margin-bottom: 1rem; }
-.t2-line { height: 10px; background: rgba(255,255,255,0.05); border-radius: 5px; margin-bottom: 0.5rem; }
 
 /* --- Screen 9: Justification --- */
 textarea {
@@ -273,9 +304,37 @@ textarea:focus { border-color: var(--accent-blue); }
 
 /* --- Screen 10: Outro --- */
 .success-card { text-align: center; }
-.success-icon { width: 80px; height: 80px; background: var(--accent-blue); border-radius: 40px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 0 auto 2rem; }
-.sync-status { color: var(--text-secondary); font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 0.75rem; }
-.spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.1); border-top-color: var(--accent-blue); border-radius: 50%; animation: spin 1s linear infinite; }
+.success-icon {
+    width: 80px;
+    height: 80px;
+    background: var(--accent-blue);
+    border-radius: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    margin: 0 auto 2rem;
+}
+.sync-status {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+.spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255,255,255,0.1);
+    border-top-color: var(--accent-blue);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
 @keyframes spin { to { transform: rotate(360deg); } }
-.pid-display { font-family: monospace; color: var(--text-secondary); font-size: 0.8rem; margin: 2rem 0; }
-.btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); padding: 0.75rem 1.5rem; border-radius: var(--radius-sm); cursor: pointer; }
+.pid-display {
+    font-family: monospace;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    margin: 2rem 0;
+}
