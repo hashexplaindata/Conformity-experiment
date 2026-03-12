@@ -32,8 +32,15 @@ body {
     background-color: var(--bg-void);
     color: var(--text-primary);
     overflow: hidden; /* Prevent scrolling during experiment */
+    /* VULNERABILITY PATCH: DOM Geometry (Mobile Constraints) */
+    /* Prevent iOS rubber-banding/overscroll on the body element */
+    overscroll-behavior-y: none;
     height: 100vh;
+    height: 100dvh; /* Account for dynamic iOS Safari address bars */
     width: 100vw;
+    /* Extra safeguard against text selection interfering with pointer events */
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 /* --- Screen Transitions --- */
@@ -214,6 +221,9 @@ h2 { font-size: 1.75rem; font-weight: 600; letter-spacing: -0.02em; margin-botto
 
 /* --- The Manipulation Overlay (AI Badge) --- */
 .ai-recommendation-badge {
+    /* VULNERABILITY PATCH: DOM Geometry & CSS Straitjacket. */
+    /* Strict absolute positioning ensures the badge does not participate in flex/grid calculations, */
+    /* preventing even sub-pixel layout shifts between the Control and AI conditions. */
     position: absolute;
     top: 1rem;
     right: 1rem;
@@ -229,8 +239,12 @@ h2 { font-size: 1.75rem; font-weight: 600; letter-spacing: -0.02em; margin-botto
     gap: 0.4rem;
     box-shadow: 0 4px 15px rgba(168, 85, 247, 0.5);
     z-index: 10;
+    /* CRITICAL: pointer-events none prevents the badge from intercepting clicks meant for the card */
     pointer-events: none;
     animation: badgePop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    /* Prevent subpixel text rendering shifts when animating transform */
+    -webkit-font-smoothing: antialiased;
+    backface-visibility: hidden;
 }
 
 @keyframes badgePop {

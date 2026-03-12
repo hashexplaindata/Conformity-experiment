@@ -3,7 +3,9 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- VULNERABILITY PATCH: DOM Geometry (Mobile Constraints) -->
+    <!-- Added strict viewport properties to prevent Safari double-tap-to-zoom and viewport scaling -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
     <title>Beta UI Diagnostic Dashboard — University Portal</title>
     <meta name="description" content="High-fidelity UI/UX diagnostic tool for university portal optimization.">
     

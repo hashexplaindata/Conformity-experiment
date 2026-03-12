@@ -320,8 +320,17 @@ function showScreen(id) {
 // --- Experiment Logic ---
 function init() {
     // Navigation Lock
-    window.history.pushState(null, "", window.location.href);
-    window.onpopstate = () => window.history.pushState(null, "", window.location.href);
+    // VULNERABILITY PATCH: State Machine fragility (Navigation Leaks).
+    // A single pushState is insufficient if a user spams the back button or swipes rapidly.
+    // We actively replace state, push a dummy, and strictly override popstate.
+    window.history.replaceState(null, document.title, window.location.href);
+    window.history.pushState(null, document.title, window.location.href);
+    window.addEventListener('popstate', (e) => {
+        // Force them forward again
+        window.history.pushState(null, document.title, window.location.href);
+        // Prevent any default back-navigation behavior
+        e.preventDefault();
+    });
 
     // Screen 1 Event
     DOM.btnConsent.addEventListener('click', () => showScreen(2));
@@ -343,7 +352,12 @@ function init() {
         DOM.btnFinalize.disabled = e.target.value.trim().length < 5;
     });
 
+    // VULNERABILITY PATCH: State Machine fragility (Final Submission).
+    // Ensure the submit button cannot be mashed, triggering multiple batch write attempts.
     DOM.btnFinalize.addEventListener('click', () => {
+        if (DOM.btnFinalize.disabled) return;
+        DOM.btnFinalize.disabled = true; // Lock immediately
+
         STATE.justification = DOM.textareaJustification.value.trim();
         showScreen(10);
         executeBatchPayload();
@@ -391,10 +405,21 @@ function loadNextTrial() {
     }
 
     // Start millisecond-accurate timer
+    // VULNERABILITY PATCH: Chronometric Contamination.
+    // The previous implementation risked starting the timer before the browser's painting engine
+    // had physically rendered the pixels, especially on slower mobile devices.
+    // We must wait for the current frame to paint, AND the next frame to begin.
     requestAnimationFrame(() => { 
+        // The first rAF fires before the next repaint.
         requestAnimationFrame(() => { 
-            STATE.trialStartTime = performance.now(); 
-            STATE.isTrialActive = true; 
+            // The second rAF fires before the *following* repaint, meaning the first repaint
+            // has successfully completed and the UI is physically on the glass.
+            setTimeout(() => {
+                 // The setTimeout pushes the timer start to the back of the task queue,
+                 // ensuring any lingering layout thrashing is resolved.
+                STATE.trialStartTime = performance.now();
+                STATE.isTrialActive = true;
+            }, 0);
         }); 
     });
 }
@@ -413,21 +438,36 @@ function createChoiceCard(type, trial) {
         card.style.setProperty('--mouse-y', `${y}%`);
     });
 
-    card.addEventListener('pointerdown', () => {
+    // VULNERABILITY PATCH: State Machine & Event Debouncing.
+    // Ensure `pointerdown` is strictly debounced and listeners are
+    // functionally isolated to prevent a rapid double-tap from pushing
+    // two objects to the state array for a single trial.
+    const onSelect = (e) => {
+        // Prevent default touch behaviors (like zooming or scrolling) that might leak through
+        e.preventDefault();
+
         if (!STATE.isTrialActive) return;
         
+        // Immediate state lock
+        STATE.isTrialActive = false;
+
         // Visual feedback
         card.classList.add('selected');
         
+        // Remove listener to guarantee single execution
+        card.removeEventListener('pointerdown', onSelect);
+
         handleUserSelection(type, trial);
-    });
+    };
+
+    card.addEventListener('pointerdown', onSelect);
     
     return card;
 }
 
 function handleUserSelection(selection, trial) {
     const rt = performance.now() - STATE.trialStartTime;
-    STATE.isTrialActive = false;
+    // Removed STATE.isTrialActive = false here as it is now strictly locked down within the pointerdown event itself.
 
     // Log Tidy Data Row
     STATE.results.push({
@@ -455,10 +495,34 @@ async function executeBatchPayload() {
     // Append justification to all rows
     STATE.results.forEach(row => row.semantic_justification = STATE.justification);
 
+    // VULNERABILITY PATCH: Network Resilience (Data Loss Prevention)
+    // Instantly persist to localStorage before attempting network operations.
+    // If the auditorium Wi-Fi fails or the user closes the tab mid-sync,
+    // the data survives and can be manually recovered via devtools.
+    try {
+        localStorage.setItem(`telemetry_backup_${STATE.pid}`, JSON.stringify(STATE.results));
+    } catch (e) {
+        console.warn("Local storage backup failed (Quota/Privacy mode).", e);
+    }
+
     try {
         // Check for Firebase (initialized in index.html via firebase-config.js)
         if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
             const db = firebase.firestore();
+
+            // Enable offline persistence immediately if not already active.
+            // This ensures Firestore will cache the write and synchronize later
+            // if the device momentarily drops connection.
+            try {
+                await db.enablePersistence({ synchronizeTabs: true });
+            } catch (err) {
+                if (err.code === 'failed-precondition') {
+                    console.warn('Persistence: Multiple tabs open.');
+                } else if (err.code === 'unimplemented') {
+                    console.warn('Persistence: Browser unsupported.');
+                }
+            }
+
             const batch = db.batch();
 
             STATE.results.forEach(data => {
@@ -466,16 +530,25 @@ async function executeBatchPayload() {
                 batch.set(docRef, data);
             });
 
+            // If offline, this resolves immediately because of persistence, writing to cache.
+            // When connection returns, Firestore syncs it automatically.
             await batch.commit();
             onSyncSuccess();
+
+            // Clean up localStorage if sync (or cache write) was successful
+            localStorage.removeItem(`telemetry_backup_${STATE.pid}`);
+
         } else {
             console.warn("Firebase not detected. Payload logged to console:", STATE.results);
             setTimeout(onSyncSuccess, 1500); // Simulate sync delay
         }
     } catch (error) {
         console.error("Critical Sync Failure:", error);
-        DOM.syncStatus.innerHTML = `<span style="color:#ff453a">⚠️ Sync Failed. Error: ${error.code || 'Network'}</span>`;
-        // Potential fallback: Save to localStorage for later recovery
+        DOM.syncStatus.innerHTML = `
+            <div style="text-align:center;">
+                <span style="color:#ff453a; display:block; margin-bottom:8px;">⚠️ Sync Failed (Network Error)</span>
+                <span style="font-size:0.75rem; color:var(--text-secondary);">Your data is saved locally. Please do not close this tab until reconnected.</span>
+            </div>`;
     }
 }
 
