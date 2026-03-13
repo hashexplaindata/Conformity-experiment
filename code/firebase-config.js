@@ -13,7 +13,10 @@ const firebaseConfig = {
 // Defensive execution to prevent UI thread blocking if the CDN fails to load
 if (typeof firebase !== 'undefined') {
     try {
-        firebase.initializeApp(firebaseConfig);
+        // Prevent fatal error if the browser aggressively reloads the script
+        if (typeof firebase.initializeApp === 'function' && (!firebase.apps || firebase.apps.length === 0)) {
+            firebase.initializeApp(firebaseConfig);
+        }
     } catch (e) {
         // Absolute silence mandated. No console.error here.
         // The failure will be naturally caught by experiment.js falling back to localStorage.
