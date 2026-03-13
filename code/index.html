@@ -112,6 +112,29 @@
         </div>
     </div>
 
+    <div id="screen-manipulation" class="screen hidden">
+        <div class="card">
+            <h2 style="margin-bottom: 10px;">Post-Task Reflection</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 25px;">During the UI evaluation, did you notice any specific labels, badges, or recommendations attached to the design options?</p>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button class="btn-primary btn-manipulation" data-val="1">Yes, I noticed an "AI Recommended" badge</button>
+                <button class="btn-primary btn-manipulation" data-val="2">I noticed other text/labels (e.g., "Open for Fall")</button>
+                <button class="btn-primary btn-manipulation" data-val="0">No, I did not notice any specific badges</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-debrief" class="screen hidden">
+        <div class="card" style="text-align: left;">
+            <h2 style="margin-bottom: 15px;">Study Debriefing</h2>
+            <p style="margin-bottom: 10px;"><strong>Thank you for your participation.</strong></p>
+            <p style="margin-bottom: 10px; font-size: 0.9rem; line-height: 1.5; color: var(--text-secondary);">The true purpose of this study was not to test beta UI designs for a university portal. We are investigating <em>informational influence</em>—specifically, whether the presence of an "AI Recommended" badge alters human decision-making and cognitive processing time when faced with ambiguous choices.</p>
+            <p style="margin-bottom: 10px; font-size: 0.9rem; line-height: 1.5; color: var(--text-secondary);">Because knowing this beforehand would have changed your natural behavior, we could not disclose it until now. Your data remains completely anonymous and will be used strictly for academic research.</p>
+            <p style="margin-bottom: 20px; font-size: 0.9rem; line-height: 1.5; color: var(--text-secondary);">If you consent to submit your data now that you know the true purpose, please click "Submit & Finish" below. If you wish to withdraw, you may simply close this tab.</p>
+            <button id="btn-submit-final" class="btn-primary" style="width: 100%;">Submit & Finish</button>
+        </div>
+    </div>
+
     <!-- ====== SCREEN 10: THE OUTRO ====== -->
     <div id="screen-10" class="screen">
         <div class="bento-container">
