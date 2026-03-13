@@ -440,19 +440,22 @@ function createChoiceCard(type, trial) {
         card.style.setProperty('--mouse-y', `${y}%`);
     });
 
-    const handlePointerDown = (e) => {
+    // Migrate from pointerdown → click so that mobile scroll gestures are not
+    // misread as deliberate selections. The browser natively cancels click if a
+    // drag/scroll is detected between pointerdown and pointerup, eliminating the
+    // scroll-vs-select confound. Expected trade-off: ~50-100ms additional touch-
+    // release latency added to response_latency_ms across the dataset (acceptable).
+    const handleClick = () => {
         if (!STATE.isTrialActive) return;
 
-        e.preventDefault();
         STATE.isTrialActive = false;
-
-        card.removeEventListener('pointerdown', handlePointerDown);
+        card.removeEventListener('click', handleClick);
         card.classList.add('selected');
 
         handleUserSelection(type, trial);
     };
 
-    card.addEventListener('pointerdown', handlePointerDown);
+    card.addEventListener('click', handleClick);
 
     return card;
 }
