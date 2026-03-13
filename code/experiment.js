@@ -35,7 +35,8 @@ const STATE = {
     isTrialActive: false,
     justification: "",
     activeScreen: null,
-    pendingTransitionTimer: null
+    pendingTransitionTimer: null,
+    manipulation_noticed: null
 };
 
 // Persist PID to localStorage
@@ -379,8 +380,27 @@ function init() {
     DOM.btnFinalize.addEventListener('click', () => {
         DOM.btnFinalize.disabled = true;
         STATE.justification = DOM.textareaJustification.value.trim();
+        showScreen('manipulation');
+    });
+
+    // Route: Manipulation Check -> Debrief
+    document.querySelectorAll('.btn-manipulation').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            STATE.manipulation_noticed = parseInt(e.target.dataset.val);
+
+            // Append this crucial metric to every trial row before sending
+            STATE.results.forEach(row => {
+                row.manipulation_noticed = STATE.manipulation_noticed;
+            });
+
+            showScreen('debrief');
+        });
+    });
+
+    // Route: Debrief -> Outro & Payload Execution
+    document.getElementById('btn-submit-final').addEventListener('click', () => {
         showScreen(10);
-        executeBatchPayload();
+        executeBatchPayload(); // The data is securely transmitted ONLY after full informed consent is achieved
     });
 }
 
