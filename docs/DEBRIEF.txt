@@ -26,7 +26,7 @@ WITHDRAWAL:
 If you wish to withdraw your data from the study, please contact the researcher below within 7 days. Provide the Participant ID shown on your completion screen.
 
 QUESTIONS OR CONCERNS:
-Contact: [Your Name]
+Contact: hashexplaindata
 Email: [your.email@institution.edu]
 
 Thank you again for contributing to this research!

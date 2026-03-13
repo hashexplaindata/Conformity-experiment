@@ -18,9 +18,9 @@ The experiment is now accessible at `http://localhost:8000/code/index.html`
 ### Step 2: Verify Both Conditions
 
 - **Control Link**: `http://localhost:8000/code/index.html?condition=control`
-  - Confirm: No "AI Suggested" badges visible.
+  - Confirm: No "AI Recommended" badges visible.
 - **AI Link**: `http://localhost:8000/code/index.html?condition=ai`
-  - Confirm: "✨ AI Suggested" badges visible on designated options.
+  - Confirm: "✨ AI Recommended" badges visible on designated options.
 
 ### Step 3: Prepare Distribution Link
 

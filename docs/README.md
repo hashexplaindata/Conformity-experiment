@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This experiment tests whether an "AI Recommended" label influences users' UI design preferences. Participants view 8 pairs of interface mockups and select their preferred option. Half see neutral labels (control); half see one option per pair marked with a "★ AI Recommended" badge (treatment).
+This experiment tests whether an "AI Recommended" label influences users' UI design preferences. Participants view 6 pairs of interface mockups and select their preferred option. Half see neutral labels (control); half see one option per pair marked with a "★ AI Recommended" badge (treatment).
 
 ## Folder Structure
 
@@ -32,7 +32,7 @@ This experiment tests whether an "AI Recommended" label influences users' UI des
 
 ## Contact
 
-[Your Name / Email]
+hashexplaindata (hashexplaindata@users.noreply.github.com)
 
 ---
 _Generated: 2026-02-27 | Version: 1.0_

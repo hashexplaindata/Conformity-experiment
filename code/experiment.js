@@ -386,13 +386,7 @@ function init() {
     // Route: Manipulation Check -> Debrief
     document.querySelectorAll('.btn-manipulation').forEach(btn => {
         btn.addEventListener('click', (e) => {
-            STATE.manipulation_noticed = parseInt(e.target.dataset.val);
-
-            // Append this crucial metric to every trial row before sending
-            STATE.results.forEach(row => {
-                row.manipulation_noticed = STATE.manipulation_noticed;
-            });
-
+            STATE.manipulation_noticed = Number(e.target.dataset.val);
             showScreen('debrief');
         });
     });
@@ -500,7 +494,10 @@ function handleUserSelection(selection, trial) {
 
 // --- Firebase Integration (Batch Write) ---
 async function executeBatchPayload() {
-    STATE.results.forEach(row => row.semantic_justification = STATE.justification);
+    STATE.results.forEach(row => {
+        row.semantic_justification = STATE.justification;
+        row.manipulation_noticed = STATE.manipulation_noticed;
+    });
 
     let localBackupSucceeded = false;
     try {
