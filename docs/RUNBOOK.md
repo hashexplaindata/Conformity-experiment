@@ -73,4 +73,4 @@ The experiment is now accessible at `http://localhost:8000/code/index.html`
 | Images not loading | Ensure all files are in the same `code/` directory |
 
 ---
-_Last updated: 2026-02-27_
+

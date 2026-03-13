@@ -33,4 +33,4 @@
 - [ ] Approval #: _______________
 
 ---
-_Template version: 1.0 | 2026-02-27_
+_Template version: 1.0
