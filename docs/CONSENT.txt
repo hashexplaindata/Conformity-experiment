@@ -3,7 +3,7 @@ INFORMED CONSENT — UI Preference Study
 You are invited to participate in a research study evaluating user interfaces. During this session, you will be asked to view 6 pairs of digital layouts (such as course schedules, digital libraries, and fee vouchers) and select the layout you find most intuitive.
 
 WHAT YOU WILL DO:
-You will view 6 pairs of user interface designs and select the one you prefer in each pair. You will also rate your confidence in each choice. The study takes approximately 3-5 minutes.
+You will view 6 pairs of user interface designs and select the one you prefer in each pair. The study takes approximately 3-5 minutes.
 
 VOLUNTARY PARTICIPATION:
 Your participation is entirely voluntary. You may stop at any time by closing your browser. No penalty will result from withdrawal.
@@ -18,7 +18,7 @@ RISKS:
 This study involves minimal risk. You will only be viewing interface designs and clicking on your preferences.
 
 CONTACT:
-If you have questions about this study, please contact: [Muhammad Hasham, hashamnasir86@gmail.com]
+If you have questions about this study, please contact: Hasham Nasir (hashamnasir86@gmail.com)
 
 By proceeding, you confirm that you are 18 years of age or older and consent to participate.
 

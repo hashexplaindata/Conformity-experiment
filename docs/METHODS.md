@@ -18,42 +18,32 @@ Participants were recruited from [classroom / online panel]. Inclusion criteria:
 
 A between-subjects experimental design with two conditions:
 
-- **Control condition:** Participants viewed 8 pairs of UI mockups with neutral labels ("Option A" / "Option B") and selected their preferred design.
-- **AI Label condition:** Participants viewed the same 8 pairs, but one option in each pair displayed a "★ AI Recommended" badge.
+- **Control condition:** Participants viewed 6 pairs of UI mockups with neutral labels ("Option A" / "Option B") and selected their preferred design.
+- **AI Label condition:** Participants viewed the same 6 pairs, but one option in each pair displayed a "★ AI Recommended" badge.
 
-Assignment to conditions was randomized (50/50) using client-side JavaScript random number generation at the point of entry.
+Assignment was experimenter-controlled. Participants were recruited via WhatsApp and directed to specific conditions using URL parameters (?condition=control vs. ?condition=ai), guaranteeing an exact cohort split.
 
 ## Stimuli
 
-Eight pairs of high-fidelity UI mockups were created covering common interface patterns:
-
-1. E-commerce product card (button color: blue vs. green)
-2. Settings page (toggle alignment: left vs. right)
-3. Analytics dashboard widget (chart type: bar vs. line)
-4. Signup form (CTA copy: "Sign Up" vs. "Get Started")
-5. Pricing table (highlighted tier: Basic vs. Pro)
-6. Navigation sidebar (icon style: outlined vs. filled)
-7. Notification banner (position: top vs. inline)
-8. Search results (layout: list vs. grid)
+Participants evaluated 6 distinct, context-neutral UI domains designed to elicit aesthetic ambiguity: 1. Server CPU Load (Data Analytics), 2. Product Card (E-Commerce), 3. Notification Toggles (Settings), 4. Subscription Tiers (SaaS Pricing), 5. App Menu (Navigation), 6. 2FA Verification (Security).
 
 Each pair shared identical layout and functionality, differing only in a single design attribute. Pairs were rendered as CSS/HTML mockups within the experiment page. In the AI condition, one option per pair received a visually prominent "★ AI Recommended" badge. The assignment of which option received the badge was counterbalanced across pairs.
 
 ## Procedure
 
-1. Participants accessed the experiment via a URL that randomly redirected them to one of two conditions.
+1. Participants accessed the experiment via a condition-specific URL shared by the experimenter.
 2. A welcome screen explained the task and obtained informed consent.
-3. Participants completed 8 trials presented in randomized order.
+3. Participants completed 6 trials presented in randomized order.
 4. On each trial, two UI mockups appeared side-by-side (left/right placement randomized).
 5. Participants clicked to select their preferred design.
-6. After selection, they rated their confidence on a 5-point scale (1 = not at all confident, 5 = very confident).
-7. Upon completion, participants saw a summary and could download their responses.
+6. Upon completion of the in-app debriefing screen, data was silently transmitted to Firebase.
 
 ## Measures
 
 - **Primary DV:** Choice (A or B) — coded as whether the AI-preferred option was selected
 - **Secondary DVs:**
-  - Confidence rating (1–5 Likert scale)
   - Reaction time (ms) — time from trial display to choice click
+  - Semantic justification (post-task open-ended response)
 - **Between-subjects IV:** Condition (control vs. AI label)
 - **Metadata:** Participant UUID, trial order, pair ID, timestamp
 
@@ -79,7 +69,7 @@ Each pair shared identical layout and functionality, differing only in a single 
 - A debrief statement was provided upon completion explaining the true purpose of the study and the manipulation.
 - Participants could withdraw at any time by closing their browser.
 - The study involved minimal risk (viewing interface mockups and clicking preferences).
-- Data was stored locally on participant devices (CSV download) and not transmitted to external servers.
+- Data is silently transmitted to Firebase Firestore upon completion of the in-app debriefing screen.
 
 ---
 _Copy-paste this text into your Methods section. Update bracketed placeholders as needed._

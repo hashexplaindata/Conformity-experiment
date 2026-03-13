@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This experiment tests whether an "AI Recommended" label influences users' UI design preferences. Participants view 8 pairs of interface mockups and select their preferred option. Half see neutral labels (control); half see one option per pair marked with a "★ AI Recommended" badge (treatment).
+This experiment tests whether an "AI Recommended" label influences users' UI design preferences. Participants view 6 pairs of interface mockups and select their preferred option. Half see neutral labels (control); half see one option per pair marked with a "★ AI Recommended" badge (treatment).
 
 ## Folder Structure
 
@@ -16,7 +16,7 @@ This experiment tests whether an "AI Recommended" label influences users' UI des
 1. Open `docs/RUNBOOK.md` and follow Step 1
 2. Open `http://localhost:8000/code/index.html?condition=control` (Control)
 3. Open `http://localhost:8000/code/index.html?condition=ai` (Treatment)
-4. Data is synced to Firebase and available via CSV download.
+4. Data is silently transmitted to Firebase Firestore upon completion of the in-app debriefing screen.
 
 ## Key Files
 
@@ -32,7 +32,7 @@ This experiment tests whether an "AI Recommended" label influences users' UI des
 
 ## Contact
 
-[Your Name / Email]
+Hasham Nasir (hashamnasir86@gmail.com)
 
 ---
 _Generated: 2026-02-27 | Version: 1.0_

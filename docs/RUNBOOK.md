@@ -18,9 +18,9 @@ The experiment is now accessible at `http://localhost:8000/code/index.html`
 ### Step 2: Verify Both Conditions
 
 - **Control Link**: `http://localhost:8000/code/index.html?condition=control`
-  - Confirm: No "AI Suggested" badges visible.
+  - Confirm: No "AI Recommended" badges visible.
 - **AI Link**: `http://localhost:8000/code/index.html?condition=ai`
-  - Confirm: "✨ AI Suggested" badges visible on designated options.
+  - Confirm: "✨ AI Recommended" badges visible on designated options.
 
 ### Step 3: Prepare Distribution Link
 
@@ -33,14 +33,12 @@ The experiment is now accessible at `http://localhost:8000/code/index.html`
 
 ### Step 4: Welcome Participants
 
-- Instruct participants to open the link in their browser
-- They will be randomly assigned to control or AI condition
+- Participants are directed to their pre-assigned condition via condition-specific URLs distributed in WhatsApp groups.
 - Estimated completion time: 3-5 minutes per participant
 
 ### Step 5: Monitor Progress
 
-- Each participant downloads their own CSV upon completion
-- Collect CSV files from participants
+- Monitor Firebase Console to confirm responses are being transmitted in real-time.
 
 ---
 
@@ -73,8 +71,6 @@ The experiment is now accessible at `http://localhost:8000/code/index.html`
 | Issue | Solution |
 |-------|----------|
 | Images not loading | Ensure all files are in the same `code/` directory |
-| CSV download fails | Check browser popup blocker settings |
-| Charts not rendering | Ensure internet connection (Chart.js loads from CDN) |
 
 ---
 _Last updated: 2026-02-27_
