@@ -71,5 +71,22 @@ Each pair shared identical layout and functionality, differing only in a single 
 - The study involved minimal risk (viewing interface mockups and clicking preferences).
 - Data is silently transmitted to Firebase Firestore upon completion of the in-app debriefing screen.
 
+## Data Quality & Filtering Protocol
+
+### Semantic Justification Field (Screen 9)
+
+The in-app UI enforces a 5-character minimum on the free-text justification input before the "Complete Diagnostic" button is enabled. This threshold was intentionally set low to avoid study abandonment at the final step immediately before the Firebase payload fires — a higher character floor would increase drop-off without meaningfully improving response quality.
+
+**Known risk:** Mobile keyboard friction will motivate a subset of participants to satisfy the minimum with low-effort, non-informative responses (e.g., "idk", "good", "it looked better").
+
+**Pre-registered mitigation (analytical, not code-level):** Low-effort justification responses will be identified and excluded from NLP analysis using cosine-similarity scoring against a reference corpus of substantive responses. The filtering procedure is as follows:
+
+1. Vectorize all justification strings using a sentence-transformer model (e.g., `all-MiniLM-L6-v2`).
+2. Compute cosine similarity between each response and the centroid of a manually validated "high-effort" reference set.
+3. Flag responses below a similarity threshold (TBD empirically, expected ≈ 0.25) as low-effort.
+4. Report: (a) total responses collected, (b) number flagged, (c) percentage retained, prior to any inferential analysis.
+
+Flagged responses will be excluded from semantic analysis only. They will **not** be excluded from the primary choice DV or reaction time analyses, as those measures are unaffected by justification quality.
+
 ---
 
