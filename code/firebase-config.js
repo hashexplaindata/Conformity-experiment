@@ -2,12 +2,12 @@
 // Strict Silent Client Mandate: Do not add console.log or error logging.
 
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_AUTH_DOMAIN",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_STORAGE_BUCKET",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyDKlPQqyGelXEgEQqADZDSgrRdYi_90CRQ",
+  authDomain: "conformity-experiment.firebaseapp.com",
+  projectId: "conformity-experiment",
+  storageBucket: "conformity-experiment.firebasestorage.app",
+  messagingSenderId: "197222848320",
+  appId: "1:197222848320:web:0afaeb8953330c11cbcca5"
 };
 
 // Defensive execution to prevent UI thread blocking if the CDN fails to load
