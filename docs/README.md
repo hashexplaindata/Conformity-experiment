@@ -32,7 +32,8 @@ This experiment tests whether an "AI Recommended" label influences users' UI des
 
 ## Contact
 
-Hasham Nasir (hashamnasir86@gmail.com)
+Muhammad Hasham 
+hashamnasir86@gmail.com
 
 ---
 _Generated: 2026-02-27 | Version: 1.0_

@@ -72,4 +72,4 @@ Each pair shared identical layout and functionality, differing only in a single 
 - Data is silently transmitted to Firebase Firestore upon completion of the in-app debriefing screen.
 
 ---
-_Copy-paste this text into your Methods section. Update bracketed placeholders as needed._
+

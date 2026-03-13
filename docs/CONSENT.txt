@@ -23,4 +23,4 @@ If you have questions about this study, please contact: Hasham Nasir (hashamnasi
 By proceeding, you confirm that you are 18 years of age or older and consent to participate.
 
 ---
-Version: 1.0 | Date: 2026-02-27
+Version: 1.0
