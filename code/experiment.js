@@ -289,6 +289,7 @@ const DOM = {
     trialCounter: document.getElementById('trial-counter'),
     progressFill: document.getElementById('progress-fill'),
     textareaJustification: document.getElementById('semantic-justification'),
+    justificationHint:     document.getElementById('justification-hint'),
     btnFinalize: document.getElementById('btn-finalize'),
     syncStatus: document.getElementById('sync-status'),
     finalActions: document.getElementById('final-actions'),
@@ -343,8 +344,17 @@ function init() {
     });
 
     // Screen 9 Events
+    // NOTE: The threshold (12 chars + at least one space) is intentional and must NOT be raised further.
+    // A higher threshold increases study abandonment at the final screen, immediately
+    // before the Firebase payload fires. Low-effort responses are expected and will be
+    // filtered analytically via cosine-similarity scoring during NLP post-processing.
     DOM.textareaJustification.addEventListener('input', (e) => {
-        DOM.btnFinalize.disabled = e.target.value.trim().length < 5;
+        const val = e.target.value.trim();
+        const valid = val.length >= 12 && val.includes(' ');
+        DOM.btnFinalize.disabled = !valid;
+        DOM.justificationHint.textContent = val.length > 0 && !valid
+            ? 'Please provide a brief, complete sentence.'
+            : '';
     });
 
     DOM.btnFinalize.addEventListener('click', () => {

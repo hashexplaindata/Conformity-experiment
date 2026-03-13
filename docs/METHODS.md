@@ -75,7 +75,7 @@ Each pair shared identical layout and functionality, differing only in a single 
 
 ### Semantic Justification Field (Screen 9)
 
-The in-app UI enforces a 5-character minimum on the free-text justification input before the "Complete Diagnostic" button is enabled. This threshold was intentionally set low to avoid study abandonment at the final step immediately before the Firebase payload fires — a higher character floor would increase drop-off without meaningfully improving response quality.
+The in-app UI enforces a minimum of 12 characters **and** at least one space (requiring a minimum of two words) on the free-text justification input before the "Complete Diagnostic" button is enabled. If the input does not meet these criteria, the UI displays: *"Please provide a brief, complete sentence."* This threshold was set to discourage single-word garbage responses (e.g., "idk", "good") while remaining low enough to avoid study abandonment at the final step immediately before the Firebase payload fires.
 
 **Known risk:** Mobile keyboard friction will motivate a subset of participants to satisfy the minimum with low-effort, non-informative responses (e.g., "idk", "good", "it looked better").
 

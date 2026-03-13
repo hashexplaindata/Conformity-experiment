@@ -295,12 +295,20 @@ textarea {
     font-family: inherit;
     font-size: 1rem;
     resize: none;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.4rem;
     outline: none;
     transition: border-color 0.3s ease;
 }
 
 textarea:focus { border-color: var(--accent-blue); }
+
+.input-hint {
+    min-height: 1.1rem;
+    margin: 0 0 1rem;
+    font-size: 0.8rem;
+    color: #f5a623;
+    text-align: left;
+}
 
 /* --- Screen 10: Outro --- */
 .success-card { text-align: center; }
