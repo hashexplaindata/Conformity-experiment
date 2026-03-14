@@ -47,163 +47,412 @@ try {
 }
 
 // --- Trial Definitions (Pixel-Perfect Components) ---
-/**
- * OptiUX VALIDATION SUITE
- * The narrative: These are universal UI patterns where AI is actively used 
- * to predict human cognitive load, trust, and retention.
- */
+// ============================================================
+// TRIALS ARRAY — Drop-in replacement for experiment.js
+// Replace the entire const TRIALS = [...] block with this.
+// 6 domains: Streaming, Music, Email, Jobs, Shopping, News
+// All from apps actively being "AI-fied" in 2026
+// target 'A'/'B' distribution: 3A / 3B (balanced)
+// ============================================================
+
 const TRIALS = [
+
+    // ── TRIAL 1 ── Streaming / Netflix-style ─────────────────
     {
-        domain: 'Fintech (Security Verification)',
-        ai_label: 'AI Prediction: Highest User Trust',
+        domain: 'Content Discovery (Streaming)',
         renderA: () => `
-            <div style="padding: 15px; text-align:center;">
-                <div style="width:40px; height:40px; border-radius:20px; background:rgba(48, 209, 88, 0.1); margin:0 auto 15px; display:flex; align-items:center; justify-content:center;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#30d158" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                </div>
-                <h3 style="font-size:1rem; margin-bottom:12px;">Secure Entry</h3>
-                <div style="display:flex; justify-content:center; gap:8px; margin-bottom:15px;">
-                    ${[1,2,3,4].map(() => `<div style="width:12px; height:12px; border-radius:6px; background:var(--text-primary);"></div>`).join('')}
-                </div>
-                <button style="width:100%; padding:10px; background:var(--text-primary); color:var(--bg-main); border:none; border-radius:6px; font-weight:bold; font-size:0.8rem;">Authorize</button>
-            </div>`,
-        renderB: () => `
-            <div style="padding: 15px;">
-                <h3 style="font-size:0.9rem; margin-bottom:8px; color:var(--text-secondary);">Identity Check</h3>
-                <p style="font-size:0.75rem; margin-bottom:15px; line-height:1.4;">Enter the unique 4-digit code sent to your primary device.</p>
-                <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:8px; margin-bottom:15px;">
-                    ${[1,2,3,4].map(() => `<div style="height:35px; background:var(--bg-surface); border:1px solid var(--border); border-radius:4px;"></div>`).join('')}
-                </div>
-                <button style="width:100%; padding:8px; background:transparent; border:1px solid var(--text-primary); color:var(--text-primary); border-radius:6px; font-size:0.8rem;">Verify Identity</button>
-            </div>`,
-        target: 'A'
-    },
-    {
-        domain: 'HealthTech (Goal Tracking)',
-        ai_label: 'AI Recommended: High Engagement',
-        renderA: () => `
-            <div style="padding: 15px; text-align:center;">
-                <h3 style="font-size:0.95rem; margin-bottom:15px;">Daily Activity</h3>
-                <div style="position:relative; width:100px; height:100px; margin:0 auto;">
-                    <svg viewBox="0 0 36 36" style="width:100%; height:100%; transform: rotate(-90deg);">
-                        <path stroke="var(--bg-surface)" stroke-width="3.5" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                        <path stroke="var(--accent-blue)" stroke-width="3.5" stroke-dasharray="75, 100" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                    </svg>
-                    <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%);">
-                        <span style="font-size:1.2rem; font-weight:800;">75%</span>
+            <div style="padding:0; height:100%; display:flex; flex-direction:column; overflow:hidden;">
+                <div style="height:155px; background:linear-gradient(155deg, #0f0c29 0%, #302b63 50%, #24243e 100%); position:relative; flex-shrink:0; display:flex; align-items:flex-end; padding:14px;">
+                    <div style="position:absolute;inset:0;background-image:radial-gradient(ellipse at 25% 40%, rgba(229,9,20,0.18) 0%, transparent 65%), radial-gradient(ellipse at 80% 60%, rgba(168,85,247,0.12) 0%, transparent 55%);"></div>
+                    <div style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.65);padding:2px 7px;border-radius:3px;font-size:0.65rem;color:white;font-weight:700;border:1px solid rgba(255,255,255,0.2);">16+</div>
+                    <div style="z-index:1;">
+                        <span style="display:inline-block;padding:2px 7px;background:rgba(229,9,20,0.85);color:white;font-size:0.6rem;font-weight:800;border-radius:3px;margin-bottom:6px;letter-spacing:0.08em;text-transform:uppercase;">Series</span>
+                        <h3 style="color:white;font-size:1.25rem;font-weight:800;margin:0;text-shadow:0 2px 10px rgba(0,0,0,0.9);line-height:1.1;">Echoes of Tomorrow</h3>
                     </div>
                 </div>
-                <p style="font-size:0.7rem; color:var(--text-secondary); margin-top:10px;">Steps: 7,500 / 10,000</p>
-            </div>`,
-        renderB: () => `
-            <div style="padding: 15px;">
-                <h3 style="font-size:0.95rem; margin-bottom:12px;">Metrics</h3>
-                <div style="margin-bottom:10px;">
-                    <div style="display:flex; justify-content:space-between; font-size:0.75rem; margin-bottom:4px;">
-                        <span>Steps</span><span style="font-weight:bold;">7,500</span>
+                <div style="padding:14px; flex:1;">
+                    <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;">
+                        <span style="padding:2px 7px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:3px;font-size:0.68rem;color:var(--text-secondary);">Sci-Fi</span>
+                        <span style="padding:2px 7px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:3px;font-size:0.68rem;color:var(--text-secondary);">Thriller</span>
+                        <span style="padding:2px 7px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:3px;font-size:0.68rem;color:var(--text-secondary);">Drama</span>
                     </div>
-                    <div style="width:100%; height:6px; background:var(--bg-surface); border-radius:3px;"><div style="width:75%; height:100%; background:var(--accent-blue); border-radius:3px;"></div></div>
-                </div>
-                <div style="margin-bottom:10px;">
-                    <div style="display:flex; justify-content:space-between; font-size:0.75rem; margin-bottom:4px;">
-                        <span>Sleep</span><span style="font-weight:bold;">6.2h</span>
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <span style="color:#e5b80b;font-size:0.82rem;font-weight:600;">★ 8.4</span>
+                            <span style="color:var(--text-secondary);font-size:0.75rem;">S2 · 8 Episodes</span>
+                        </div>
+                        <span style="font-size:0.75rem;color:var(--text-secondary);">~48 min</span>
                     </div>
-                    <div style="width:100%; height:6px; background:var(--bg-surface); border-radius:3px;"><div style="width:60%; height:100%; background:var(--accent-purple); border-radius:3px;"></div></div>
-                </div>
-            </div>`,
-        target: 'B'
-    },
-    {
-        domain: 'News & Media (Readability)',
-        ai_label: 'AI Prediction: 20% Faster Scan Rate',
-        renderA: () => `
-            <div style="padding: 0;">
-                <div style="height:80px; background:linear-gradient(to right, #2c3e50, #3498db);"></div>
-                <div style="padding:12px;">
-                    <h3 style="font-size:0.9rem; line-height:1.2; margin-bottom:6px;">Global Tech Summit: Future of Quantum Computing</h3>
-                    <p style="font-size:0.7rem; color:var(--text-secondary);">The annual conference kicks off with a focus on stable hardware...</p>
+                    <p style="font-size:0.78rem;color:var(--text-secondary);line-height:1.5;margin:0 0 12px 0;">A physicist discovers her past decisions are rewriting the present — one memory at a time.</p>
+                    <button style="width:100%;padding:9px;background:var(--text-primary);color:var(--bg-main);border:none;border-radius:7px;font-weight:700;font-size:0.85rem;cursor:default;">▶ Play</button>
                 </div>
             </div>`,
         renderB: () => `
-            <div style="padding: 12px; display:flex; gap:12px; align-items:center; height:100%;">
-                <div style="flex:1;">
-                    <span style="font-size:0.6rem; text-transform:uppercase; color:var(--accent-blue); font-weight:bold;">Breaking</span>
-                    <h3 style="font-size:0.9rem; line-height:1.2; margin:4px 0;">Quantum Computing Summit Begins</h3>
-                    <span style="font-size:0.65rem; color:var(--text-secondary);">4 min read • Tech</span>
+            <div style="padding:14px;height:100%;display:flex;flex-direction:column;">
+                <div style="margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+                    <h3 style="font-size:0.78rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.1em;margin:0;">Recommended For You</h3>
+                    <span style="font-size:0.7rem;color:var(--accent-blue);">See all</span>
                 </div>
-                <div style="width:60px; height:60px; background:var(--bg-surface); border-radius:8px; flex-shrink:0;"></div>
-            </div>`,
-        target: 'B'
-    },
-    {
-        domain: 'Navigation (Route Optimization)',
-        ai_label: 'AI Recommended: Optimal Safety',
-        renderA: () => `
-            <div style="padding: 15px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                    <span style="font-weight:bold; font-size:0.9rem;">Fastest Path</span>
-                    <span style="color:#ff453a; font-size:0.8rem; font-weight:bold;">12 min</span>
-                </div>
-                <div style="height:60px; background:var(--bg-surface); border-radius:6px; border-left:4px solid #ff453a; display:flex; align-items:center; padding:0 10px;">
-                    <span style="font-size:0.75rem; color:var(--text-secondary);">Heavier traffic detected on Main St.</span>
-                </div>
-            </div>`,
-        renderB: () => `
-            <div style="padding: 15px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                    <span style="font-weight:bold; font-size:0.9rem;">Balanced Path</span>
-                    <span style="color:var(--accent-blue); font-size:0.8rem; font-weight:bold;">15 min</span>
-                </div>
-                <div style="height:60px; background:var(--bg-surface); border-radius:6px; border-left:4px solid var(--accent-blue); display:flex; align-items:center; padding:0 10px;">
-                    <span style="font-size:0.75rem; color:var(--text-secondary);">Residential roads • Well-lit route</span>
-                </div>
-            </div>`,
-        target: 'B'
-    },
-    {
-        domain: 'E-Learning (Course Architecture)',
-        ai_label: 'AI Prediction: Max Retention',
-        renderA: () => `
-            <div style="padding: 15px;">
-                <h3 style="font-size:0.9rem; margin-bottom:15px;">Mastering Python</h3>
-                ${[1,2,3].map(i => `
-                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
-                        <div style="width:20px; height:20px; border-radius:10px; background:var(--accent-purple); display:flex; align-items:center; justify-content:center; font-size:0.6rem; color:white;">${i}</div>
-                        <div style="flex:1; height:8px; background:var(--bg-surface); border-radius:4px;"></div>
-                    </div>
-                `).join('')}
-            </div>`,
-        renderB: () => `
-            <div style="padding: 15px; text-align:center;">
-                <h3 style="font-size:0.9rem; margin-bottom:12px;">Course Modules</h3>
-                <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:8px;">
-                    ${[1,2,3,4,5,6].map(i => `<div style="aspect-ratio:1; background:var(--bg-surface); border-radius:8px; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:0.7rem;">${i}</div>`).join('')}
+                <div style="display:flex;flex-direction:column;gap:11px;flex:1;">
+                    ${[
+                        {title:'Echoes of Tomorrow', meta:'Sci-Fi · Thriller · 48 min', rating:'8.4', match:'97', grad:'#0f0c29, #302b63'},
+                        {title:'The Quiet Frequency', meta:'Mystery · Drama · 52 min', rating:'7.9', match:'91', grad:'#1a0533, #4a1a7a'},
+                        {title:'Meridian', meta:'Action · Sci-Fi · 44 min', rating:'8.1', match:'88', grad:'#0d1f30, #1a4060'},
+                        {title:'Cold Signal', meta:'Crime · Drama · 55 min', rating:'7.6', match:'85', grad:'#1a1a0d, #3d3d1a'}
+                    ].map(item => `
+                        <div style="display:flex;gap:11px;align-items:center;">
+                            <div style="width:58px;height:58px;border-radius:7px;background:linear-gradient(155deg,${item.grad});flex-shrink:0;"></div>
+                            <div style="flex:1;min-width:0;">
+                                <strong style="display:block;font-size:0.88rem;margin-bottom:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${item.title}</strong>
+                                <span style="font-size:0.72rem;color:var(--text-secondary);display:block;margin-bottom:3px;">${item.meta}</span>
+                                <div style="display:flex;align-items:center;gap:8px;">
+                                    <span style="color:#e5b80b;font-size:0.72rem;">★ ${item.rating}</span>
+                                    <span style="font-size:0.68rem;color:rgba(48,209,88,0.9);font-weight:700;">${item.match}% Match</span>
+                                </div>
+                            </div>
+                        </div>`).join('')}
                 </div>
             </div>`,
         target: 'A'
     },
+
+    // ── TRIAL 2 ── Music / Spotify-style ─────────────────────
     {
-        domain: 'Shopping (Personalization)',
-        ai_label: 'AI Recommended: Match for Your Profile',
+        domain: 'Music Discovery (Audio Streaming)',
         renderA: () => `
-            <div style="padding: 15px;">
-                <div style="height:100px; background:var(--bg-surface); border-radius:8px; margin-bottom:10px;"></div>
-                <h3 style="font-size:0.85rem; margin-bottom:4px;">Eco-Tech Smart Watch</h3>
-                <span style="font-weight:bold; font-size:1.1rem;">$199.00</span>
-                <p style="font-size:0.65rem; color:var(--text-secondary); margin-top:8px;">Priority Shipping: 2 Days</p>
+            <div style="padding:14px;height:100%;display:flex;flex-direction:column;">
+                <div style="margin-bottom:14px;">
+                    <h3 style="font-size:1rem;font-weight:700;margin:0 0 2px 0;">Daily Mix 3</h3>
+                    <p style="font-size:0.78rem;color:var(--text-secondary);margin:0;">Based on your recent listening</p>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:1;">
+                    ${[
+                        {title:'Neon Static', artist:'HVME', grad:'#1a0a3e,#5a1a8a', dur:'3:42'},
+                        {title:'Late Drive', artist:'Jungle', grad:'#0a1f0a,#1a5a1a', dur:'4:11'},
+                        {title:'Glass Walls', artist:'FKJ', grad:'#3e1a0a,#8a4a1a', dur:'3:28'},
+                        {title:'Sundowner', artist:'Polo & Pan', grad:'#0a2a3e,#1a6a8a', dur:'5:03'}
+                    ].map((t,i) => `
+                        <div style="background:linear-gradient(145deg,${t.grad});border-radius:10px;padding:12px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;min-height:90px;">
+                            <div style="position:absolute;inset:0;background:radial-gradient(circle at 80% 20%,rgba(255,255,255,0.06) 0%,transparent 60%);"></div>
+                            <div style="font-size:0.65rem;color:rgba(255,255,255,0.5);font-weight:700;text-transform:uppercase;letter-spacing:0.08em;">#${i+1}</div>
+                            <div>
+                                <div style="font-size:0.85rem;font-weight:700;color:white;margin-bottom:2px;">${t.title}</div>
+                                <div style="font-size:0.72rem;color:rgba(255,255,255,0.65);">${t.artist}</div>
+                            </div>
+                        </div>`).join('')}
+                </div>
+                <div style="margin-top:12px;display:flex;justify-content:center;gap:20px;align-items:center;">
+                    <span style="font-size:1.2rem;color:var(--text-secondary);">⏮</span>
+                    <div style="width:40px;height:40px;background:var(--text-primary);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:1rem;color:var(--bg-main);">▶</div>
+                    <span style="font-size:1.2rem;color:var(--text-secondary);">⏭</span>
+                </div>
             </div>`,
         renderB: () => `
-            <div style="padding: 12px; display:flex; gap:12px;">
-                <div style="width:80px; height:80px; background:var(--bg-surface); border-radius:8px; flex-shrink:0;"></div>
-                <div style="flex:1;">
-                    <h3 style="font-size:0.85rem; margin-bottom:4px;">Smart Watch</h3>
-                    <div style="color:#fbbf24; font-size:0.75rem; margin-bottom:4px;">★★★★☆ (820)</div>
-                    <span style="font-weight:bold; font-size:1rem;">$199.00</span>
+            <div style="padding:14px;height:100%;display:flex;flex-direction:column;">
+                <div style="margin-bottom:12px;display:flex;gap:12px;align-items:center;">
+                    <div style="width:52px;height:52px;border-radius:8px;background:linear-gradient(145deg,#1a0a3e,#5a1a8a);flex-shrink:0;"></div>
+                    <div>
+                        <h3 style="font-size:0.95rem;font-weight:700;margin:0 0 2px 0;">Daily Mix 3</h3>
+                        <p style="font-size:0.75rem;color:var(--text-secondary);margin:0;">Spotify · 12 songs</p>
+                    </div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:1px;flex:1;">
+                    ${[
+                        {n:1,title:'Neon Static',artist:'HVME',dur:'3:42',active:true},
+                        {n:2,title:'Late Drive',artist:'Jungle',dur:'4:11',active:false},
+                        {n:3,title:'Glass Walls',artist:'FKJ',dur:'3:28',active:false},
+                        {n:4,title:'Sundowner',artist:'Polo & Pan',dur:'5:03',active:false},
+                        {n:5,title:'Chromakey',artist:'Bonobo',dur:'4:55',active:false}
+                    ].map(t => `
+                        <div style="display:flex;align-items:center;gap:12px;padding:8px;border-radius:7px;background:${t.active?'rgba(29,185,84,0.08)':'transparent'};">
+                            <span style="width:20px;text-align:center;font-size:0.8rem;color:${t.active?'#1db954':'var(--text-secondary)'};font-weight:${t.active?'700':'400'};">${t.active?'▶':t.n}</span>
+                            <div style="flex:1;min-width:0;">
+                                <div style="font-size:0.88rem;font-weight:${t.active?'700':'500'};color:${t.active?'#1db954':'var(--text-primary)'};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${t.title}</div>
+                                <div style="font-size:0.72rem;color:var(--text-secondary);">${t.artist}</div>
+                            </div>
+                            <span style="font-size:0.72rem;color:var(--text-secondary);">${t.dur}</span>
+                        </div>`).join('')}
+                </div>
+            </div>`,
+        target: 'B'
+    },
+
+    // ── TRIAL 3 ── Email / Gmail-style ───────────────────────
+    {
+        domain: 'Inbox Triage (Email Client)',
+        renderA: () => `
+            <div style="padding:0;height:100%;display:flex;flex-direction:column;overflow:hidden;">
+                <div style="padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <span style="font-size:0.8rem;font-weight:700;">Priority Inbox</span>
+                        <span style="background:rgba(234,67,53,0.15);color:#ea4335;font-size:0.65rem;font-weight:700;padding:1px 6px;border-radius:10px;">4 new</span>
+                    </div>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                </div>
+                <div style="display:flex;flex-direction:column;overflow:hidden;flex:1;">
+                    ${[
+                        {from:'Sarah Chen',sub:'Re: Q1 Strategy Doc',prev:'Looks great — I\'ve added my comments on slide 4...',time:'9:41 AM',unread:true,dot:'#4285f4'},
+                        {from:'GitHub',sub:'[Action Required] New sign-in detected',prev:'Someone signed in to your account from a new device.',time:'8:15 AM',unread:true,dot:'#ea4335'},
+                        {from:'Notion',sub:'Weekly digest: 3 updates in your workspace',prev:'Your team added 3 new pages this week. Here\'s a summary...',time:'7:00 AM',unread:true,dot:'#fbbc04'},
+                        {from:'Marcus Webb',sub:'Lunch tomorrow?',prev:'Hey, are you free around 1pm? Wanted to catch up.',time:'Yesterday',unread:false,dot:''}
+                    ].map(e => `
+                        <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.04);background:${e.unread?'rgba(255,255,255,0.02)':'transparent'};">
+                            <div style="width:34px;height:34px;border-radius:17px;background:${e.dot?e.dot:'var(--bg-surface)'};flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:white;">${e.from[0]}</div>
+                            <div style="flex:1;min-width:0;">
+                                <div style="display:flex;justify-content:space-between;margin-bottom:2px;">
+                                    <span style="font-size:0.82rem;font-weight:${e.unread?'700':'500'};color:${e.unread?'var(--text-primary)':'var(--text-secondary)'};">${e.from}</span>
+                                    <span style="font-size:0.7rem;color:var(--text-secondary);">${e.time}</span>
+                                </div>
+                                <div style="font-size:0.8rem;font-weight:${e.unread?'600':'400'};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:1px;">${e.sub}</div>
+                                <div style="font-size:0.72rem;color:var(--text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${e.prev}</div>
+                            </div>
+                            ${e.unread?'<div style="width:7px;height:7px;border-radius:50%;background:#4285f4;flex-shrink:0;margin-top:6px;"></div>':''}
+                        </div>`).join('')}
+                </div>
+            </div>`,
+        renderB: () => `
+            <div style="padding:0;height:100%;display:flex;flex-direction:column;overflow:hidden;">
+                <div style="display:flex;border-bottom:1px solid var(--border);">
+                    ${[
+                        {label:'Primary',count:4,active:true},
+                        {label:'Social',count:12,active:false},
+                        {label:'Promos',count:37,active:false}
+                    ].map(tab => `
+                        <div style="flex:1;padding:10px 5px;text-align:center;border-bottom:${tab.active?'2px solid #4285f4':'2px solid transparent'};cursor:pointer;">
+                            <span style="font-size:0.78rem;font-weight:${tab.active?'700':'500'};color:${tab.active?'#4285f4':'var(--text-secondary)'};">${tab.label}</span>
+                            ${tab.count?`<span style="margin-left:5px;background:${tab.active?'rgba(66,133,244,0.15)':'rgba(255,255,255,0.08)'};color:${tab.active?'#4285f4':'var(--text-secondary)'};font-size:0.62rem;font-weight:700;padding:1px 5px;border-radius:8px;">${tab.count}</span>`:''}
+                        </div>`).join('')}
+                </div>
+                <div style="display:flex;flex-direction:column;flex:1;overflow:hidden;">
+                    ${[
+                        {from:'Sarah Chen',sub:'Re: Q1 Strategy Doc',prev:'I\'ve added comments on slide 4...',time:'9:41 AM',unread:true},
+                        {from:'GitHub',sub:'[Action Required] New sign-in',prev:'New sign-in detected on your account.',time:'8:15 AM',unread:true},
+                        {from:'Notion',sub:'Weekly digest: 3 updates',prev:'Your team added 3 new pages this week.',time:'7:00 AM',unread:true},
+                        {from:'Marcus Webb',sub:'Lunch tomorrow?',prev:'Are you free around 1pm?',time:'Yesterday',unread:false}
+                    ].map(e => `
+                        <div style="display:flex;align-items:flex-start;gap:10px;padding:9px 14px;border-bottom:1px solid rgba(255,255,255,0.04);">
+                            <div style="width:32px;height:32px;border-radius:16px;background:var(--bg-surface);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:700;border:1px solid var(--border);">${e.from[0]}</div>
+                            <div style="flex:1;min-width:0;">
+                                <div style="display:flex;justify-content:space-between;margin-bottom:1px;">
+                                    <span style="font-size:0.8rem;font-weight:${e.unread?'700':'400'};">${e.from}</span>
+                                    <span style="font-size:0.68rem;color:var(--text-secondary);">${e.time}</span>
+                                </div>
+                                <div style="font-size:0.78rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-secondary);">${e.sub} — <span style="color:rgba(255,255,255,0.35)">${e.prev}</span></div>
+                            </div>
+                        </div>`).join('')}
                 </div>
             </div>`,
         target: 'A'
+    },
+
+    // ── TRIAL 4 ── Jobs / LinkedIn-style ─────────────────────
+    {
+        domain: 'Job Discovery (Career Platform)',
+        renderA: () => `
+            <div style="padding:14px;height:100%;display:flex;flex-direction:column;">
+                <h3 style="font-size:0.82rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.08em;margin:0 0 12px 0;">Jobs for You</h3>
+                <div style="display:flex;flex-direction:column;gap:9px;flex:1;">
+                    ${[
+                        {title:'Senior Data Analyst',co:'Stripe',loc:'Remote',sal:'$120k–$160k',tag:'Easy Apply',match:96,new:true},
+                        {title:'Product Analyst',co:'Notion',loc:'SF · Hybrid',sal:'$105k–$140k',tag:'',match:91,new:false},
+                        {title:'BI Engineer',co:'Shopify',loc:'Remote',sal:'$115k–$155k',tag:'Easy Apply',match:89,new:true},
+                        {title:'Analytics Lead',co:'Linear',loc:'NYC · On-site',sal:'$130k–$175k',tag:'',match:84,new:false}
+                    ].map(j => `
+                        <div style="display:flex;align-items:center;gap:10px;padding:9px 11px;background:var(--bg-surface);border:1px solid var(--border);border-radius:9px;">
+                            <div style="width:36px;height:36px;border-radius:8px;background:var(--bg-main);border:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:800;color:var(--text-primary);">${j.co[0]}</div>
+                            <div style="flex:1;min-width:0;">
+                                <div style="display:flex;align-items:center;gap:5px;margin-bottom:1px;">
+                                    <span style="font-size:0.85rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${j.title}</span>
+                                    ${j.new?'<span style="background:rgba(0,122,255,0.12);color:var(--accent-blue);font-size:0.6rem;padding:1px 5px;border-radius:3px;font-weight:700;flex-shrink:0;">NEW</span>':''}
+                                </div>
+                                <div style="font-size:0.72rem;color:var(--text-secondary);">${j.co} · ${j.loc} · ${j.sal}</div>
+                            </div>
+                            <div style="text-align:right;flex-shrink:0;">
+                                <div style="font-size:0.7rem;color:rgba(48,209,88,0.9);font-weight:700;">${j.match}%</div>
+                                ${j.tag?`<span style="font-size:0.62rem;color:var(--accent-blue);font-weight:600;">${j.tag}</span>`:''}
+                            </div>
+                        </div>`).join('')}
+                </div>
+            </div>`,
+        renderB: () => `
+            <div style="padding:0;height:100%;display:flex;flex-direction:column;overflow:hidden;">
+                <div style="background:linear-gradient(135deg, #0a2038, #0f3a60);height:80px;position:relative;flex-shrink:0;">
+                    <div style="position:absolute;inset:0;background-image:radial-gradient(circle at 80% 50%, rgba(41,151,255,0.15) 0%, transparent 60%);"></div>
+                </div>
+                <div style="padding:0 14px;transform:translateY(-20px);">
+                    <div style="width:44px;height:44px;border-radius:10px;background:var(--bg-card);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:900;margin-bottom:8px;">S</div>
+                    <h3 style="font-size:1.1rem;font-weight:700;margin:0 0 2px 0;">Senior Data Analyst</h3>
+                    <p style="font-size:0.82rem;color:var(--text-secondary);margin:0 0 10px 0;">Stripe · Remote · Full-time</p>
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+                        <div style="display:flex;align-items:center;justify-content:center;width:52px;height:52px;border-radius:26px;border:3px solid rgba(48,209,88,0.4);position:relative;">
+                            <svg style="position:absolute;inset:0;transform:rotate(-90deg);" width="52" height="52" viewBox="0 0 52 52">
+                                <circle cx="26" cy="26" r="22" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="3"/>
+                                <circle cx="26" cy="26" r="22" fill="none" stroke="rgba(48,209,88,0.7)" stroke-width="3" stroke-dasharray="138 138" stroke-dashoffset="${138 - (138 * 0.96)}" stroke-linecap="round"/>
+                            </svg>
+                            <span style="font-size:0.72rem;font-weight:800;color:rgba(48,209,88,0.95);">96%</span>
+                        </div>
+                        <div>
+                            <div style="font-size:0.82rem;font-weight:700;color:rgba(48,209,88,0.95);">Excellent Match</div>
+                            <div style="font-size:0.72rem;color:var(--text-secondary);">$120,000 – $160,000/yr</div>
+                        </div>
+                    </div>
+                    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;">
+                        ${['SQL','Python','dbt','Looker','Startup'].map(s=>`<span style="padding:3px 9px;background:rgba(41,151,255,0.08);border:1px solid rgba(41,151,255,0.2);border-radius:4px;font-size:0.7rem;color:var(--accent-blue);">${s}</span>`).join('')}
+                    </div>
+                    <button style="width:100%;padding:11px;background:var(--accent-blue);color:white;border:none;border-radius:8px;font-weight:700;font-size:0.9rem;cursor:default;">Easy Apply</button>
+                </div>
+            </div>`,
+        target: 'B'
+    },
+
+    // ── TRIAL 5 ── Shopping / Amazon-style ───────────────────
+    {
+        domain: 'Product Discovery (E-Commerce)',
+        renderA: () => `
+            <div style="padding:14px;height:100%;display:flex;flex-direction:column;">
+                <div style="margin-bottom:12px;">
+                    <h3 style="font-size:0.82rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.08em;margin:0 0 4px 0;">Picked For You</h3>
+                    <p style="font-size:0.72rem;color:var(--text-secondary);margin:0;">Based on your browsing history</p>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:1;">
+                    ${[
+                        {name:'Sony WH-1000XM6',price:'$349',orig:'$399',stars:'4.8',reviews:'12k',grad:'#0d1520,#1a2d40'},
+                        {name:'Anker MagGo Charger',price:'$45',orig:'$59',stars:'4.6',reviews:'8.4k',grad:'#1a1a0a,#3a3a1a'},
+                        {name:'Kindle Paperwhite',price:'$139',orig:'$159',stars:'4.7',reviews:'22k',grad:'#0f1a0f,#1f3f1f'},
+                        {name:'Peak Design Clip',price:'$79',orig:'$89',stars:'4.9',reviews:'3.1k',grad:'#1f0a0a,#4a1a1a'}
+                    ].map(p => `
+                        <div style="background:var(--bg-surface);border:1px solid var(--border);border-radius:9px;overflow:hidden;display:flex;flex-direction:column;">
+                            <div style="height:80px;background:linear-gradient(135deg,${p.grad});"></div>
+                            <div style="padding:8px;">
+                                <div style="font-size:0.78rem;font-weight:600;line-height:1.25;margin-bottom:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${p.name}</div>
+                                <div style="display:flex;align-items:baseline;gap:5px;margin-bottom:3px;">
+                                    <span style="font-size:0.88rem;font-weight:800;">${p.price}</span>
+                                    <span style="font-size:0.7rem;color:var(--text-secondary);text-decoration:line-through;">${p.orig}</span>
+                                </div>
+                                <div style="display:flex;align-items:center;gap:3px;">
+                                    <span style="color:#f90;font-size:0.7rem;">★</span>
+                                    <span style="font-size:0.7rem;font-weight:600;">${p.stars}</span>
+                                    <span style="font-size:0.68rem;color:var(--text-secondary);">(${p.reviews})</span>
+                                </div>
+                            </div>
+                        </div>`).join('')}
+                </div>
+            </div>`,
+        renderB: () => `
+            <div style="padding:14px;height:100%;display:flex;flex-direction:column;">
+                <div style="margin-bottom:12px;">
+                    <h3 style="font-size:0.82rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.08em;margin:0 0 4px 0;">Picked For You</h3>
+                    <p style="font-size:0.72rem;color:var(--text-secondary);margin:0;">Based on your browsing history</p>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:10px;flex:1;">
+                    ${[
+                        {name:'Sony WH-1000XM6',desc:'Industry-leading ANC, 30hr battery, multipoint',price:'$349',orig:'$399',stars:'4.8',reviews:'12k',badge:'Best Seller',grad:'#0d1520,#1a2d40'},
+                        {name:'Anker MagGo 3-in-1 Charger',desc:'15W MagSafe, Apple Watch, AirPods simultaneous',price:'$45',orig:'$59',stars:'4.6',reviews:'8.4k',badge:'Deal',grad:'#1a1a0a,#3a3a1a'},
+                        {name:'Kindle Paperwhite 12th Gen',desc:'6.8" glare-free, waterproof, 3-month battery',price:'$139',orig:'$159',stars:'4.7',reviews:'22k',badge:'',grad:'#0f1a0f,#1f3f1f'}
+                    ].map(p => `
+                        <div style="display:flex;gap:10px;padding:9px;background:var(--bg-surface);border:1px solid var(--border);border-radius:9px;">
+                            <div style="width:64px;height:64px;border-radius:7px;background:linear-gradient(135deg,${p.grad});flex-shrink:0;position:relative;">
+                                ${p.badge?`<span style="position:absolute;top:-4px;left:-4px;background:#c45500;color:white;font-size:0.55rem;font-weight:800;padding:1px 4px;border-radius:2px;">${p.badge}</span>`:''}
+                            </div>
+                            <div style="flex:1;min-width:0;">
+                                <div style="font-size:0.82rem;font-weight:600;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.name}</div>
+                                <div style="font-size:0.7rem;color:var(--text-secondary);margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.desc}</div>
+                                <div style="display:flex;align-items:center;justify-content:space-between;">
+                                    <div>
+                                        <span style="font-size:0.88rem;font-weight:800;">${p.price}</span>
+                                        <span style="font-size:0.68rem;color:var(--text-secondary);text-decoration:line-through;margin-left:4px;">${p.orig}</span>
+                                    </div>
+                                    <div style="display:flex;align-items:center;gap:2px;">
+                                        <span style="color:#f90;font-size:0.7rem;">★</span>
+                                        <span style="font-size:0.7rem;font-weight:600;">${p.stars}</span>
+                                        <span style="font-size:0.68rem;color:var(--text-secondary);">(${p.reviews})</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`).join('')}
+                </div>
+            </div>`,
+        target: 'A'
+    },
+
+    // ── TRIAL 6 ── News / Apple News-style ───────────────────
+    {
+        domain: 'News Feed (Content Aggregator)',
+        renderA: () => `
+            <div style="padding:0;height:100%;display:flex;flex-direction:column;overflow:hidden;">
+                <div style="padding:12px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+                    <h3 style="font-size:0.82rem;font-weight:700;margin:0;">Today's Top Stories</h3>
+                    <span style="font-size:0.7rem;color:var(--text-secondary);">Curated for you</span>
+                </div>
+                <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;">
+                    <div style="margin:10px 14px;border-radius:10px;overflow:hidden;background:linear-gradient(160deg,#0a1a2e,#0f2d4a);position:relative;flex-shrink:0;">
+                        <div style="padding:14px 12px 12px;">
+                            <span style="display:inline-block;padding:2px 7px;background:rgba(41,151,255,0.2);color:var(--accent-blue);font-size:0.62rem;font-weight:700;border-radius:3px;margin-bottom:8px;text-transform:uppercase;">Technology</span>
+                            <h4 style="font-size:1rem;font-weight:800;line-height:1.3;margin:0 0 6px 0;color:white;">OpenAI Releases o4 With Real-Time Reasoning Transparency</h4>
+                            <p style="font-size:0.76rem;color:rgba(255,255,255,0.55);margin:0 0 8px 0;line-height:1.4;">The new model shows its chain of thought live, letting users audit every step of complex reasoning in production.</p>
+                            <div style="display:flex;justify-content:space-between;">
+                                <span style="font-size:0.68rem;color:rgba(255,255,255,0.4);font-weight:600;">The Verge</span>
+                                <span style="font-size:0.68rem;color:rgba(255,255,255,0.4);">2 hr ago · 4 min read</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display:flex;flex-direction:column;padding:0 14px;gap:1px;overflow:hidden;">
+                        ${[
+                            {cat:'Business',title:'Nvidia\'s Market Cap Crosses $4T Milestone',src:'Reuters',time:'5 hr ago'},
+                            {cat:'Science',title:'Webb Telescope Captures First Direct Image of Exoplanet Atmosphere',src:'NASA / Nature',time:'8 hr ago'}
+                        ].map(a => `
+                            <div style="padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
+                                <span style="font-size:0.62rem;font-weight:700;color:var(--accent-blue);text-transform:uppercase;letter-spacing:0.06em;">${a.cat}</span>
+                                <p style="font-size:0.82rem;font-weight:600;line-height:1.3;margin:3px 0 4px 0;">${a.title}</p>
+                                <div style="display:flex;gap:8px;">
+                                    <span style="font-size:0.68rem;color:var(--text-secondary);font-weight:600;">${a.src}</span>
+                                    <span style="font-size:0.68rem;color:var(--text-secondary);">${a.time}</span>
+                                </div>
+                            </div>`).join('')}
+                    </div>
+                </div>
+            </div>`,
+        renderB: () => `
+            <div style="padding:0;height:100%;display:flex;flex-direction:column;overflow:hidden;">
+                <div style="padding:12px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+                    <h3 style="font-size:0.82rem;font-weight:700;margin:0;">Today's Top Stories</h3>
+                    <span style="font-size:0.7rem;color:var(--text-secondary);">Curated for you</span>
+                </div>
+                <div style="display:flex;flex-direction:column;padding:10px 14px;gap:10px;flex:1;overflow:hidden;">
+                    ${[
+                        {cat:'Technology',title:'OpenAI Releases o4 With Real-Time Reasoning Transparency',src:'The Verge',time:'2 hr ago',read:'4 min',grad:'#0a1a2e,#0f2d4a',hot:true},
+                        {cat:'Business',title:'Nvidia\'s Market Cap Crosses $4T Milestone',src:'Reuters',time:'5 hr ago',read:'2 min',grad:'#1a0f00,#3a2000',hot:false},
+                        {cat:'Science',title:'Webb Captures First Direct Exoplanet Atmosphere Image',src:'NASA / Nature',time:'8 hr ago',read:'6 min',grad:'#0a0a1a,#1a1a3a',hot:false},
+                        {cat:'Health',title:'Stanford Study Links 8-Min Daily Walks to 22% Lower Cardiac Risk',src:'JAMA',time:'10 hr ago',read:'3 min',grad:'#0a1a0a,#1a3a1a',hot:false}
+                    ].map(a => `
+                        <div style="display:flex;gap:10px;align-items:flex-start;">
+                            <div style="width:56px;height:56px;border-radius:7px;background:linear-gradient(135deg,${a.grad});flex-shrink:0;"></div>
+                            <div style="flex:1;min-width:0;">
+                                <div style="display:flex;align-items:center;gap:5px;margin-bottom:3px;">
+                                    <span style="font-size:0.62rem;font-weight:700;color:var(--accent-blue);text-transform:uppercase;">${a.cat}</span>
+                                    ${a.hot?'<span style="font-size:0.6rem;background:rgba(255,69,58,0.1);color:#ff453a;padding:1px 4px;border-radius:3px;font-weight:700;">Trending</span>':''}
+                                </div>
+                                <p style="font-size:0.8rem;font-weight:600;line-height:1.3;margin:0 0 4px 0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${a.title}</p>
+                                <div style="display:flex;gap:6px;align-items:center;">
+                                    <span style="font-size:0.68rem;color:var(--text-secondary);font-weight:600;">${a.src}</span>
+                                    <span style="font-size:0.65rem;color:rgba(255,255,255,0.2);">·</span>
+                                    <span style="font-size:0.68rem;color:var(--text-secondary);">${a.time}</span>
+                                    <span style="font-size:0.65rem;color:rgba(255,255,255,0.2);">·</span>
+                                    <span style="font-size:0.68rem;color:var(--text-secondary);">${a.read} read</span>
+                                </div>
+                            </div>
+                        </div>`).join('')}
+                </div>
+            </div>`,
+        target: 'B'
     }
+
 ];
+// ============================================================
+// END OF TRIALS ARRAY
+// Also update CFG.NUM_TRIALS to 6 (already correct)
+// target distribution: A=3 (trials 1,3,5) · B=3 (trials 2,4,6)
+// ============================================================
 
 // --- DOM Elements ---
 const DOM = {
