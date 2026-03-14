@@ -48,163 +48,158 @@ try {
 
 // --- Trial Definitions (Pixel-Perfect Components) ---
 /**
- * MindFlow: Personal Productivity Assistant Stimuli
- * These trials represent high-stakes digital life scenarios where AI 
- * assistance is contextually credible, ensuring higher engagement.
+ * OptiUX VALIDATION SUITE
+ * The narrative: These are universal UI patterns where AI is actively used 
+ * to predict human cognitive load, trust, and retention.
  */
 const TRIALS = [
     {
-        domain: 'Financial Health (Savings Optimization)',
+        domain: 'Fintech (Security Verification)',
+        ai_label: 'AI Prediction: Highest User Trust',
         renderA: () => `
-            <div style="padding: 15px;">
-                <h3 style="font-size:1rem; margin-bottom:12px; color:var(--text-primary);">Monthly Savings Breakdown</h3>
-                <div style="background:var(--bg-surface); padding:12px; border-radius:8px; border:1px solid var(--border);">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.85rem;">
-                        <span>Emergency Fund</span><span style="font-weight:bold;">$450.00</span>
-                    </div>
-                    <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.85rem;">
-                        <span>Retirement (401k)</span><span style="font-weight:bold;">$800.00</span>
-                    </div>
-                    <div style="display:flex; justify-content:space-between; font-size:0.85rem;">
-                        <span>Travel Goal</span><span style="font-weight:bold;">$200.00</span>
-                    </div>
-                </div>
-            </div>`,
-        renderB: () => `
             <div style="padding: 15px; text-align:center;">
-                <h3 style="font-size:1rem; margin-bottom:15px;">Target Progress</h3>
-                <div style="position:relative; width:100px; height:100px; margin:0 auto;">
-                    <svg viewBox="0 0 36 36" style="width:100%; height:100%; transform: rotate(-90deg);">
-                        <path stroke="var(--bg-surface)" stroke-width="4" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                        <path stroke="#10b981" stroke-width="4" stroke-dasharray="72, 100" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                    </svg>
-                    <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-weight:800; font-size:1.1rem;">72%</div>
+                <div style="width:40px; height:40px; border-radius:20px; background:rgba(48, 209, 88, 0.1); margin:0 auto 15px; display:flex; align-items:center; justify-content:center;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#30d158" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                 </div>
-                <p style="font-size:0.75rem; color:var(--text-secondary); margin-top:10px;">Dynamic Savings Velocity</p>
-            </div>`,
-        target: 'B' 
-    },
-    {
-        domain: 'Time Management (Focus Scheduling)',
-        renderA: () => `
-            <div style="padding: 15px;">
-                <h3 style="font-size:1rem; margin-bottom:10px;">Daily Agenda</h3>
-                <div style="border-left:3px solid var(--accent-blue); padding-left:10px; margin-bottom:12px;">
-                    <div style="font-size:0.85rem; font-weight:bold;">Deep Work: Project X</div>
-                    <div style="font-size:0.75rem; color:var(--text-secondary);">09:00 AM - 11:30 AM</div>
+                <h3 style="font-size:1rem; margin-bottom:12px;">Secure Entry</h3>
+                <div style="display:flex; justify-content:center; gap:8px; margin-bottom:15px;">
+                    ${[1,2,3,4].map(() => `<div style="width:12px; height:12px; border-radius:6px; background:var(--text-primary);"></div>`).join('')}
                 </div>
-                <div style="border-left:3px solid var(--accent-purple); padding-left:10px;">
-                    <div style="font-size:0.85rem; font-weight:bold;">Team Synchronization</div>
-                    <div style="font-size:0.75rem; color:var(--text-secondary);">01:00 PM - 02:00 PM</div>
-                </div>
+                <button style="width:100%; padding:10px; background:var(--text-primary); color:var(--bg-main); border:none; border-radius:6px; font-weight:bold; font-size:0.8rem;">Authorize</button>
             </div>`,
         renderB: () => `
             <div style="padding: 15px;">
-                <h3 style="font-size:1rem; margin-bottom:12px;">Energy Density Map</h3>
-                <div style="display:flex; height:60px; gap:4px; align-items:flex-end;">
-                    <div style="flex:1; height:80%; background:rgba(41, 151, 255, 0.2); border-radius:4px;"></div>
-                    <div style="flex:1; height:100%; background:var(--accent-blue); border-radius:4px;"></div>
-                    <div style="flex:1; height:40%; background:rgba(41, 151, 255, 0.4); border-radius:4px;"></div>
-                    <div style="flex:1; height:20%; background:rgba(41, 151, 255, 0.1); border-radius:4px;"></div>
+                <h3 style="font-size:0.9rem; margin-bottom:8px; color:var(--text-secondary);">Identity Check</h3>
+                <p style="font-size:0.75rem; margin-bottom:15px; line-height:1.4;">Enter the unique 4-digit code sent to your primary device.</p>
+                <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:8px; margin-bottom:15px;">
+                    ${[1,2,3,4].map(() => `<div style="height:35px; background:var(--bg-surface); border:1px solid var(--border); border-radius:4px;"></div>`).join('')}
                 </div>
-                <div style="display:flex; justify-content:space-between; margin-top:8px; font-size:0.7rem; color:var(--text-secondary);">
-                    <span>Morning</span><span>Peak</span><span>Afternoon</span>
-                </div>
-            </div>`,
-        target: 'A' 
-    },
-    {
-        domain: 'Safety & Security (Privacy Shield)',
-        renderA: () => `
-            <div style="padding: 15px;">
-                <h3 style="font-size:1rem; margin-bottom:12px;">App Permissions</h3>
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                    <span style="font-size:0.85rem;">Location Access</span>
-                    <div style="width:34px; height:18px; background:var(--accent-blue); border-radius:9px; position:relative;">
-                        <div style="width:14px; height:14px; background:white; border-radius:7px; position:absolute; right:2px; top:2px;"></div>
-                    </div>
-                </div>
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <span style="font-size:0.85rem;">Biometric Login</span>
-                    <div style="width:34px; height:18px; background:var(--bg-surface); border:1px solid var(--border); border-radius:9px;"></div>
-                </div>
-            </div>`,
-        renderB: () => `
-            <div style="padding: 15px; text-align:center;">
-                <div style="width:48px; height:48px; background:rgba(48, 209, 88, 0.1); border-radius:24px; margin:0 auto 10px; display:flex; align-items:center; justify-content:center;">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#30d158" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                </div>
-                <h3 style="font-size:0.9rem; margin-bottom:4px;">Privacy Integrity</h3>
-                <div style="font-size:1.2rem; font-weight:800; color:#30d158;">SECURE</div>
-                <p style="font-size:0.7rem; color:var(--text-secondary); margin-top:5px;">Real-time Threat Neutralization</p>
-            </div>`,
-        target: 'B'
-    },
-    {
-        domain: 'Email Filtering (Inbox Management)',
-        renderA: () => `
-            <div style="padding: 15px;">
-                <h3 style="font-size:1rem; margin-bottom:10px;">Primary Inbox</h3>
-                <div style="font-size:0.85rem; padding:8px 0; border-bottom:1px solid var(--border);">
-                    <div style="font-weight:bold;">Stripe Billing</div>
-                    <div style="font-size:0.75rem; color:var(--text-secondary);">Your subscription was renewed...</div>
-                </div>
-                <div style="font-size:0.85rem; padding:8px 0;">
-                    <div style="font-weight:bold;">Design Weekly</div>
-                    <div style="font-size:0.75rem; color:var(--text-secondary);">Top 10 AI trends for 2026...</div>
-                </div>
-            </div>`,
-        renderB: () => `
-            <div style="padding: 15px;">
-                <h3 style="font-size:1rem; margin-bottom:12px;">Priority Highlights</h3>
-                <div style="background:rgba(255, 159, 10, 0.1); padding:10px; border-radius:8px; border-left:4px solid #ff9f0a;">
-                    <div style="font-size:0.8rem; font-weight:bold;">Urgent: Contract Update</div>
-                    <p style="font-size:0.7rem; margin-top:4px;">Legal requires your digital signature by EOD.</p>
-                </div>
-                <p style="text-align:center; font-size:0.7rem; color:var(--text-secondary); margin-top:10px;">Filtered by MindFlow AI</p>
-            </div>`,
-        target: 'B'
-    },
-    {
-        domain: 'Learning Pathway (Skill Acquisition)',
-        renderA: () => `
-            <div style="padding: 15px;">
-                <h3 style="font-size:1rem; margin-bottom:10px;">Course Curriculum</h3>
-                <ul style="padding:0; list-style:none; font-size:0.8rem;">
-                    <li style="margin-bottom:8px;">1. Fundamentals of Python</li>
-                    <li style="margin-bottom:8px;">2. Data Visualization Basics</li>
-                    <li style="margin-bottom:8px; color:var(--text-secondary);">3. Neural Network Design</li>
-                </ul>
-            </div>`,
-        renderB: () => `
-            <div style="padding: 15px;">
-                <h3 style="font-size:1rem; margin-bottom:12px;">Adaptive Skill-Gap</h3>
-                <div style="display:flex; flex-wrap:wrap; gap:6px;">
-                    <span style="background:var(--accent-blue); color:white; padding:4px 8px; border-radius:4px; font-size:0.7rem;">Logic Core</span>
-                    <span style="background:var(--bg-surface); border:1px solid var(--border); padding:4px 8px; border-radius:4px; font-size:0.7rem;">Syntax</span>
-                    <span style="background:var(--accent-purple); color:white; padding:4px 8px; border-radius:4px; font-size:0.7rem;">ML Theory</span>
-                </div>
-                <p style="font-size:0.7rem; color:var(--text-secondary); margin-top:12px;">Path optimized for your career goal.</p>
+                <button style="width:100%; padding:8px; background:transparent; border:1px solid var(--text-primary); color:var(--text-primary); border-radius:6px; font-size:0.8rem;">Verify Identity</button>
             </div>`,
         target: 'A'
     },
     {
-        domain: 'Digital Wellbeing (Emotional Balance)',
+        domain: 'HealthTech (Goal Tracking)',
+        ai_label: 'AI Recommended: High Engagement',
         renderA: () => `
             <div style="padding: 15px; text-align:center;">
-                <h3 style="font-size:1rem; margin-bottom:15px;">Usage Statistics</h3>
-                <div style="font-size:2.2rem; font-weight:800;">4h 12m</div>
-                <p style="font-size:0.75rem; color:var(--text-secondary); margin-top:4px;">Daily Screen Exposure</p>
-                <div style="width:100%; height:4px; background:var(--bg-surface); margin-top:12px;">
-                    <div style="width:60%; height:100%; background:var(--accent-blue);"></div>
+                <h3 style="font-size:0.95rem; margin-bottom:15px;">Daily Activity</h3>
+                <div style="position:relative; width:100px; height:100px; margin:0 auto;">
+                    <svg viewBox="0 0 36 36" style="width:100%; height:100%; transform: rotate(-90deg);">
+                        <path stroke="var(--bg-surface)" stroke-width="3.5" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        <path stroke="var(--accent-blue)" stroke-width="3.5" stroke-dasharray="75, 100" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                    </svg>
+                    <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%);">
+                        <span style="font-size:1.2rem; font-weight:800;">75%</span>
+                    </div>
+                </div>
+                <p style="font-size:0.7rem; color:var(--text-secondary); margin-top:10px;">Steps: 7,500 / 10,000</p>
+            </div>`,
+        renderB: () => `
+            <div style="padding: 15px;">
+                <h3 style="font-size:0.95rem; margin-bottom:12px;">Metrics</h3>
+                <div style="margin-bottom:10px;">
+                    <div style="display:flex; justify-content:space-between; font-size:0.75rem; margin-bottom:4px;">
+                        <span>Steps</span><span style="font-weight:bold;">7,500</span>
+                    </div>
+                    <div style="width:100%; height:6px; background:var(--bg-surface); border-radius:3px;"><div style="width:75%; height:100%; background:var(--accent-blue); border-radius:3px;"></div></div>
+                </div>
+                <div style="margin-bottom:10px;">
+                    <div style="display:flex; justify-content:space-between; font-size:0.75rem; margin-bottom:4px;">
+                        <span>Sleep</span><span style="font-weight:bold;">6.2h</span>
+                    </div>
+                    <div style="width:100%; height:6px; background:var(--bg-surface); border-radius:3px;"><div style="width:60%; height:100%; background:var(--accent-purple); border-radius:3px;"></div></div>
+                </div>
+            </div>`,
+        target: 'B'
+    },
+    {
+        domain: 'News & Media (Readability)',
+        ai_label: 'AI Prediction: 20% Faster Scan Rate',
+        renderA: () => `
+            <div style="padding: 0;">
+                <div style="height:80px; background:linear-gradient(to right, #2c3e50, #3498db);"></div>
+                <div style="padding:12px;">
+                    <h3 style="font-size:0.9rem; line-height:1.2; margin-bottom:6px;">Global Tech Summit: Future of Quantum Computing</h3>
+                    <p style="font-size:0.7rem; color:var(--text-secondary);">The annual conference kicks off with a focus on stable hardware...</p>
                 </div>
             </div>`,
         renderB: () => `
+            <div style="padding: 12px; display:flex; gap:12px; align-items:center; height:100%;">
+                <div style="flex:1;">
+                    <span style="font-size:0.6rem; text-transform:uppercase; color:var(--accent-blue); font-weight:bold;">Breaking</span>
+                    <h3 style="font-size:0.9rem; line-height:1.2; margin:4px 0;">Quantum Computing Summit Begins</h3>
+                    <span style="font-size:0.65rem; color:var(--text-secondary);">4 min read • Tech</span>
+                </div>
+                <div style="width:60px; height:60px; background:var(--bg-surface); border-radius:8px; flex-shrink:0;"></div>
+            </div>`,
+        target: 'B'
+    },
+    {
+        domain: 'Navigation (Route Optimization)',
+        ai_label: 'AI Recommended: Optimal Safety',
+        renderA: () => `
+            <div style="padding: 15px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    <span style="font-weight:bold; font-size:0.9rem;">Fastest Path</span>
+                    <span style="color:#ff453a; font-size:0.8rem; font-weight:bold;">12 min</span>
+                </div>
+                <div style="height:60px; background:var(--bg-surface); border-radius:6px; border-left:4px solid #ff453a; display:flex; align-items:center; padding:0 10px;">
+                    <span style="font-size:0.75rem; color:var(--text-secondary);">Heavier traffic detected on Main St.</span>
+                </div>
+            </div>`,
+        renderB: () => `
+            <div style="padding: 15px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    <span style="font-weight:bold; font-size:0.9rem;">Balanced Path</span>
+                    <span style="color:var(--accent-blue); font-size:0.8rem; font-weight:bold;">15 min</span>
+                </div>
+                <div style="height:60px; background:var(--bg-surface); border-radius:6px; border-left:4px solid var(--accent-blue); display:flex; align-items:center; padding:0 10px;">
+                    <span style="font-size:0.75rem; color:var(--text-secondary);">Residential roads • Well-lit route</span>
+                </div>
+            </div>`,
+        target: 'B'
+    },
+    {
+        domain: 'E-Learning (Course Architecture)',
+        ai_label: 'AI Prediction: Max Retention',
+        renderA: () => `
+            <div style="padding: 15px;">
+                <h3 style="font-size:0.9rem; margin-bottom:15px;">Mastering Python</h3>
+                ${[1,2,3].map(i => `
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                        <div style="width:20px; height:20px; border-radius:10px; background:var(--accent-purple); display:flex; align-items:center; justify-content:center; font-size:0.6rem; color:white;">${i}</div>
+                        <div style="flex:1; height:8px; background:var(--bg-surface); border-radius:4px;"></div>
+                    </div>
+                `).join('')}
+            </div>`,
+        renderB: () => `
             <div style="padding: 15px; text-align:center;">
-                <h3 style="font-size:1rem; margin-bottom:12px;">Cognitive Vibe</h3>
-                <div style="font-size:2.5rem;">🧘</div>
-                <div style="font-size:1rem; font-weight:bold; color:var(--accent-blue); margin-top:8px;">Focused & Calm</div>
-                <p style="font-size:0.7rem; color:var(--text-secondary); margin-top:5px;">Based on app-usage sentiment analysis.</p>
+                <h3 style="font-size:0.9rem; margin-bottom:12px;">Course Modules</h3>
+                <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:8px;">
+                    ${[1,2,3,4,5,6].map(i => `<div style="aspect-ratio:1; background:var(--bg-surface); border-radius:8px; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:0.7rem;">${i}</div>`).join('')}
+                </div>
+            </div>`,
+        target: 'A'
+    },
+    {
+        domain: 'Shopping (Personalization)',
+        ai_label: 'AI Recommended: Match for Your Profile',
+        renderA: () => `
+            <div style="padding: 15px;">
+                <div style="height:100px; background:var(--bg-surface); border-radius:8px; margin-bottom:10px;"></div>
+                <h3 style="font-size:0.85rem; margin-bottom:4px;">Eco-Tech Smart Watch</h3>
+                <span style="font-weight:bold; font-size:1.1rem;">$199.00</span>
+                <p style="font-size:0.65rem; color:var(--text-secondary); margin-top:8px;">Priority Shipping: 2 Days</p>
+            </div>`,
+        renderB: () => `
+            <div style="padding: 12px; display:flex; gap:12px;">
+                <div style="width:80px; height:80px; background:var(--bg-surface); border-radius:8px; flex-shrink:0;"></div>
+                <div style="flex:1;">
+                    <h3 style="font-size:0.85rem; margin-bottom:4px;">Smart Watch</h3>
+                    <div style="color:#fbbf24; font-size:0.75rem; margin-bottom:4px;">★★★★☆ (820)</div>
+                    <span style="font-weight:bold; font-size:1rem;">$199.00</span>
+                </div>
             </div>`,
         target: 'A'
     }
